@@ -1,7 +1,7 @@
-package org.paz.community.members.service.member;
+package org.paz.community.member.service;
 
-import org.paz.community.members.domain.Member;
-import org.paz.community.members.dto.MemberDto;
+import org.paz.community.member.domain.Member;
+import org.paz.community.member.dto.MemberDto;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;

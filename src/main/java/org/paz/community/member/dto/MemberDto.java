@@ -1,4 +1,4 @@
-package org.paz.community.members.dto;
+package org.paz.community.member.dto;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import lombok.Getter;

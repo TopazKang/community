@@ -1,6 +1,6 @@
-package org.paz.community.members.repository;
+package org.paz.community.member.repository;
 
-import org.paz.community.members.domain.Member;
+import org.paz.community.member.domain.Member;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;

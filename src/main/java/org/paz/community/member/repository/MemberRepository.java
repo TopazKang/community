@@ -1,6 +1,6 @@
-package org.paz.community.members.repository;
+package org.paz.community.member.repository;
 
-import org.paz.community.members.domain.Member;
+import org.paz.community.member.domain.Member;
 
 public interface MemberRepository {
 

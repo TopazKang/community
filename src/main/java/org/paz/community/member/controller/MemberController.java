@@ -1,9 +1,9 @@
-package org.paz.community.members.controller;
+package org.paz.community.member.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
-import org.paz.community.members.domain.Member;
-import org.paz.community.members.dto.MemberDto;
-import org.paz.community.members.service.member.MemberServiceImpl;
+import org.paz.community.member.domain.Member;
+import org.paz.community.member.dto.MemberDto;
+import org.paz.community.member.service.MemberServiceImpl;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;

@@ -1,10 +1,10 @@
-package org.paz.community.members.service.member;
+package org.paz.community.member.service;
 
 import lombok.extern.slf4j.Slf4j;
-import org.paz.community.members.domain.Member;
-import org.paz.community.members.dto.MemberDto;
+import org.paz.community.member.domain.Member;
+import org.paz.community.member.dto.MemberDto;
 import org.paz.community.dto.TokenDto;
-import org.paz.community.members.repository.CommonMemberRepository;
+import org.paz.community.member.repository.CommonMemberRepository;
 import org.paz.community.utils.JwtTokenProvider;
 import org.paz.community.utils.TimeGetter;
 
@@ -54,7 +54,7 @@ public class MemberServiceImpl implements MemberService {
 
 
     /**
-     * ㅁㄴ
+     *
      *
      * @param dto   로그인 정보
      * @param files 프로필이

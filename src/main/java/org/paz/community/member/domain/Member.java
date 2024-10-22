@@ -1,4 +1,4 @@
-package org.paz.community.members.domain;
+package org.paz.community.member.domain;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
