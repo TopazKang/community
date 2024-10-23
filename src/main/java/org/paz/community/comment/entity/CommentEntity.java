@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.paz.community.global.entity.BaseEntity;
 import org.paz.community.member.entity.MemberEntity;
 import org.paz.community.post.entity.PostEntity;
 
@@ -12,7 +13,7 @@ import org.paz.community.post.entity.PostEntity;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name="comment")
-public class CommentEntity {
+public class CommentEntity extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
