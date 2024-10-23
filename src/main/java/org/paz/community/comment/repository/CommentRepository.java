@@ -1,4 +1,7 @@
 package org.paz.community.comment.repository;
 
-public interface CommentRepository {
+import org.paz.community.comment.entity.CommentEntity;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface CommentRepository extends JpaRepository<CommentEntity, Long> {
 }
