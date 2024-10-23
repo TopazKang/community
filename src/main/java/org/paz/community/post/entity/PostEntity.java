@@ -26,16 +26,16 @@ public class PostEntity extends BaseEntity {
     private String content;
 
     @Column(name="post_image_path", nullable = false)
-    private String post_image_path;
+    private String postImagePath;
 
     @Column(name="likes_count")
-    private Integer likes_count;
+    private Integer likesCount;
 
     @Column(name="hits_count")
-    private Integer hits_count;
+    private Integer hitsCount;
 
     @Column(name="replies_count")
-    private Integer replies_count;
+    private Integer repliesCount;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="user_id")
