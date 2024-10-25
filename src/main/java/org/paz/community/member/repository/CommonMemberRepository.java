@@ -47,37 +47,37 @@ public class CommonMemberRepository implements MemberRepository {
     // 회원가입
     @Override
     public void createUser(Member member) {
-        String sql = "insert into members values(null, ?, ?, ?, ?, now(), now(), null)";
+        String sql = "insert into member values(null, ?, ?, ?, ?, now(), now(), null)";
         jdbcTemplate.update(sql, member.getNickname(), member.getEmail(), member.getPassword(), member.getProfile_image_path());
     }
     // 이메일 중복 확인
     @Override
     public int emailChk(Member member) {
-        String sql = "select count(*) from members where email = ?";
+        String sql = "select count(*) from member where email = ?";
         return jdbcTemplate.queryForObject(sql, Integer.class, member.getEmail());
     }
     // 닉네임 중복 확인
     @Override
     public int nicknameChk(Member member) {
-        String sql = "select count(*) from members where nickname = ?";
+        String sql = "select count(*) from member where nickname = ?";
         return jdbcTemplate.queryForObject(sql, Integer.class, member.getNickname());
     }
     // 로그인을 위한 비밀번호 조회 및 반환
     @Override
     public Member login(Member member) {
-        String sql = "select id, password, profile_image_path from members where email = ? and deleted_at is null";
+        String sql = "select id, password, profile_image_path from member where email = ? and deleted_at is null";
         return jdbcTemplate.queryForObject(sql, new Object[]{member.getEmail()}, new LoginRowMapper());
     }
     // 회원정보 조회
     @Override
     public Member readInfo(Member member) {
-        String sql = "select nickname, email from members where id = ?";
+        String sql = "select nickname, email from member where id = ?";
         return jdbcTemplate.queryForObject(sql, new Object[]{member.getId()}, new InfoRowMapper());
     }
     // 회원정보 수정
     @Override
     public void modifyInfo(Member member) {
-        StringBuilder sql = new StringBuilder("update members set ");
+        StringBuilder sql = new StringBuilder("update member set ");
         Map<String, Object> updates = new HashMap<>();
 
         if(member.getNickname() != null) {
@@ -101,13 +101,13 @@ public class CommonMemberRepository implements MemberRepository {
     // 비밀번호 변경
     @Override
     public void changePassword(Member member) {
-        String sql = "update members set password = ?, updated_at = now() where id = ?";
+        String sql = "update member set password = ?, updated_at = now() where id = ?";
         jdbcTemplate.update(sql, member.getPassword(), member.getId());
     }
     // 회원 탈퇴
     @Override
     public void deleteMember(Member member) {
-        String sql = "update members set deleted_at = now() where id = ?";
+        String sql = "update member set deleted_at = now() where id = ?";
         jdbcTemplate.update(sql, member.getId());
     }
 }
