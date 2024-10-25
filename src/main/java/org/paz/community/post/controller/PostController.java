@@ -26,11 +26,11 @@ public class PostController {
     public ResponseEntity<Void> createPost(@RequestHeader("Authorization") String token,
                                            @RequestPart(value="request") CreatePostRequestDto data,
                                            @RequestPart(value = "file", required = false) List<MultipartFile> files){
-        postService.createPost(token, data,files);
+        postService.createPost(token.substring(7), data,files);
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/")
+    @GetMapping(value = "/")
     @Operation(summary = "전체 게시글 조회")
     public ResponseEntity<List<ReadSummaryPostResponseDto>> readAllPost(){
         List<ReadSummaryPostResponseDto> response = postService.readAllPost();
@@ -38,7 +38,7 @@ public class PostController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/{postId}")
+    @GetMapping(value = "/{postId}")
     @Operation(summary = "단일 게시글 조회")
     public ResponseEntity<ReadOnePostResponseDto> readOnePost(@PathVariable Long postId){
         ReadOnePostResponseDto response = postService.readOnePost(postId);
@@ -46,7 +46,7 @@ public class PostController {
         return ResponseEntity.ok(response);
     }
 
-    @PatchMapping("/{postId}")
+    @PatchMapping(value = "/{postId}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
     @Operation(summary = "게시글 수정")
     public ResponseEntity<Void> modifyPost(@PathVariable Long postId,
                                            @RequestPart ModifyPostRequestDto data,
@@ -56,7 +56,7 @@ public class PostController {
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/{postId}")
+    @DeleteMapping(value = "/{postId}")
     @Operation(summary = "게시글 삭제")
     public ResponseEntity<Void> deletePost(@PathVariable Long postId) {
         postService.deletePost(postId);
