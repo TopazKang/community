@@ -18,8 +18,8 @@ public class CommentController {
     @Operation(summary = "댓글 작성")
     public ResponseEntity<Void> createComment(@RequestHeader("Authorization") String token,
                                               @PathVariable Long postId,
-                                              @RequestPart String comment){
-        commentService.createComment(token, postId, comment);
+                                              @RequestBody String comment){
+        commentService.createComment(token.substring(7), postId, comment);
 
         return ResponseEntity.ok().build();
     }
@@ -35,7 +35,7 @@ public class CommentController {
     @PutMapping(value="/{commentId}")
     @Operation(summary = "댓글 수정")
     public ResponseEntity<Void> modifyComment(@PathVariable Long commentId,
-                                              @RequestPart String comment){
+                                              @RequestBody String comment){
         commentService.modifyComment(commentId, comment);
 
         return ResponseEntity.ok().build();
