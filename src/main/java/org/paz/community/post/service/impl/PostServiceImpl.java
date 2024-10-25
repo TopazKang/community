@@ -93,7 +93,7 @@ public class PostServiceImpl implements PostService {
     @Override
     public List<ReadSummaryPostResponseDto> readAllPost() {
         // 게시글 엔티티에 전체 게시글 정보 조회
-        List<PostEntity> postEntities = postRepository.findAll();
+        List<PostEntity> postEntities = postRepository.findByDeletedAtIsNull();
 
         // 엔티티 list를 토대로 게시글 dto 리스트를 반환
         return postEntities.stream()
