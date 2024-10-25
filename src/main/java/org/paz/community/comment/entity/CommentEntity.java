@@ -2,6 +2,7 @@ package org.paz.community.comment.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.paz.community.global.entity.BaseEntity;
@@ -12,6 +13,7 @@ import org.paz.community.post.entity.PostEntity;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Table(name="comment")
 public class CommentEntity extends BaseEntity {
 
@@ -29,4 +31,9 @@ public class CommentEntity extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
     private PostEntity postEntity;
+
+    // 댓글 수정을 위한 Setter
+    public void modifyComment(String modifiedComment){
+        this.comment = modifiedComment;
+    }
 }

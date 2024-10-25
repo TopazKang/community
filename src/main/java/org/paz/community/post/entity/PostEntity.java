@@ -12,6 +12,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Table(name="post")
 public class PostEntity extends BaseEntity {
 
@@ -43,4 +44,30 @@ public class PostEntity extends BaseEntity {
 
     @OneToMany(mappedBy = "postEntity", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<CommentEntity> commentEntities;
+
+    // 수정을 위한 setter 로직
+
+    /**
+     * 게시글 제목 수정 Setter
+     * @param modifiedTitle 제목 수정 데이터
+     */
+    public void modityTitle(String modifiedTitle){
+        this.title = modifiedTitle;
+    }
+
+    /**
+     * 게시글 내용 수정 Setter
+     * @param modifiedContent 내용 수정 데이터
+     */
+    public void modifyContent(String modifiedContent){
+        this.content = modifiedContent;
+    }
+
+    /**
+     * 게시글 이미지 경로 수정 Setter
+     * @param modifiedPath 이미지 경로 수정 데이터
+     */
+    public void modifyPostImagePath(String modifiedPath){
+        this.postImagePath = modifiedPath;
+    }
 }
