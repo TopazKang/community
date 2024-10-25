@@ -23,7 +23,7 @@ public class PostController {
 
     @PostMapping(value = "/", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
     @Operation(summary = "게시글 작성")
-    public ResponseEntity<Void> CreatePost(@RequestHeader("Authorization") String token,
+    public ResponseEntity<Void> createPost(@RequestHeader("Authorization") String token,
                                            @RequestPart(value="request") CreatePostRequestDto data,
                                            @RequestPart(value = "file", required = false) List<MultipartFile> files){
         postService.createPost(token, data,files);
@@ -32,7 +32,7 @@ public class PostController {
 
     @GetMapping("/")
     @Operation(summary = "전체 게시글 조회")
-    public ResponseEntity<List<ReadSummaryPostResponseDto>> ReadAllPost(){
+    public ResponseEntity<List<ReadSummaryPostResponseDto>> readAllPost(){
         List<ReadSummaryPostResponseDto> response = postService.readAllPost();
 
         return ResponseEntity.ok(response);
@@ -40,7 +40,7 @@ public class PostController {
 
     @GetMapping("/{postId}")
     @Operation(summary = "단일 게시글 조회")
-    public ResponseEntity<ReadOnePostResponseDto> ReadOnePost(@PathVariable Long postId){
+    public ResponseEntity<ReadOnePostResponseDto> readOnePost(@PathVariable Long postId){
         ReadOnePostResponseDto response = postService.readOnePost(postId);
 
         return ResponseEntity.ok(response);
@@ -48,7 +48,7 @@ public class PostController {
 
     @PatchMapping("/{postId}")
     @Operation(summary = "게시글 수정")
-    public ResponseEntity<Void> ModifyPost(@PathVariable Long postId,
+    public ResponseEntity<Void> modifyPost(@PathVariable Long postId,
                                            @RequestPart ModifyPostRequestDto data,
                                            @RequestPart (value="file", required = false) List<MultipartFile> files){
         postService.modifyPost(postId, data, files);
@@ -58,7 +58,7 @@ public class PostController {
 
     @DeleteMapping("/{postId}")
     @Operation(summary = "게시글 삭제")
-    public ResponseEntity<Void> DeletePost(@PathVariable Long postId) {
+    public ResponseEntity<Void> deletePost(@PathVariable Long postId) {
         postService.deletePost(postId);
 
         return ResponseEntity.ok().build();
