@@ -87,6 +87,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     /**
+     * 유저의 닉네임 중복 체크
      * @param member 멤버 정보
      * @return 닉네임 중복여부
      */
