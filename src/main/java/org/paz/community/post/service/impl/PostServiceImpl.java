@@ -71,11 +71,15 @@ public class PostServiceImpl implements PostService {
         }
 
         // 빌더 패턴을 통해서 게시글 엔티티 생성
+        // fix: 임시로 빌더패턴에서 기본값 0 삽입(count 삼형제)
         PostEntity postEntity = PostEntity.builder()
                 .memberEntity(memberEntity)
                 .title(data.getTitle())
                 .content(data.getContent())
                 .postImagePath(imagePath)
+                .likesCount(0)
+                .hitsCount(0)
+                .repliesCount(0)
                 .build();
 
         // 게시글 DB 저장
@@ -109,7 +113,7 @@ public class PostServiceImpl implements PostService {
                 .orElseThrow(() -> new IllegalArgumentException("단일 게시글 조회 오류"));
 
         // 댓글 엔티티 리스트에 postId에 대한 모든 댓글 조회
-        List<CommentEntity> commentEntities = commentRepository.findByPostId(postId);
+        List<CommentEntity> commentEntities = commentRepository.findByPostEntityAndDeletedAtIsNull(postEntity);
 
         // 댓글 조회용 dto 리스트에 엔티티 기준으로 담은 데이터 할당
         List<ReadOneCommentResponseDto> comments = commentEntities.stream()
