@@ -29,9 +29,9 @@ public class SecurityConfig {
                         sessionManagementCustomizer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeRequests(authorizeRequestsCustomizer ->
                         authorizeRequestsCustomizer
-                                .requestMatchers("/users/login").permitAll()
+                                .requestMatchers("/api/members/login").permitAll()
                                 .requestMatchers("/swagger-ui/**","/v3/api-docs/**").permitAll() // 스웨거 접근 권한 오픈
-                                .requestMatchers("/users/","/users/nickname","/users/email").permitAll()
+                                .requestMatchers("/api/members/","/api/members/nickname","/api/members/email").permitAll()
                                 .requestMatchers("/images/profile/**","/images/post/**").permitAll()
                                 .anyRequest().authenticated())
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
