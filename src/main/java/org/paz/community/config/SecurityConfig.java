@@ -1,15 +1,18 @@
 package org.paz.community.config;
 
 import lombok.RequiredArgsConstructor;
-import org.paz.community.utils.JwtAuthenticationFilter;
-import org.paz.community.utils.JwtTokenProvider;
+import org.paz.community.member.repository.MemberJpaRepository;
+import org.paz.community.security.JwtFilter;
+import org.paz.community.security.JwtUtil;
+import org.paz.community.security.LoginFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -18,31 +21,45 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final JwtTokenProvider jwtTokenProvider;
+    private final AuthenticationConfiguration authenticationConfiguration;
+    private final JwtUtil jwtUtil;
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public BCryptPasswordEncoder bCryptPasswordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
+        return configuration.getAuthenticationManager();
+    }
+
+
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http, MemberJpaRepository memberJpaRepository) throws Exception {
         http
-                .httpBasic(httpSecurityCustomizer -> httpSecurityCustomizer.disable())
-                .csrf(csrfCustomizer -> csrfCustomizer.disable())
-                .sessionManagement(sessionManagementCustomizer ->
-                        sessionManagementCustomizer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeRequests(authorizeRequestsCustomizer ->
-                        authorizeRequestsCustomizer
-                                .requestMatchers("/api/members/login").permitAll()
+                .httpBasic((auth) -> auth.disable())
+
+                .csrf((auth) -> auth.disable())
+
+                .formLogin((auth) -> auth.disable())
+
+                .sessionManagement((session) ->
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+
+                .authorizeRequests((auth) ->
+                        auth
+                                .requestMatchers("/users/login","/login").permitAll()
                                 .requestMatchers("/swagger-ui/**","/v3/api-docs/**").permitAll() // 스웨거 접근 권한 오픈
                                 .requestMatchers("/api/members/","/api/members/nickname","/api/members/email").permitAll()
                                 .requestMatchers("/images/profile/**","/images/post/**").permitAll()
                                 .anyRequest().authenticated())
-                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
+
+                .addFilterBefore(new JwtFilter(jwtUtil), LoginFilter.class)
+
+                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil, memberJpaRepository), UsernamePasswordAuthenticationFilter.class);
+
         return http.build();
     }
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
-    }
 }
-
-
-//https://gksdudrb922.tistory.com/217

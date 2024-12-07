@@ -13,7 +13,7 @@ import org.paz.community.post.dto.ReadSummaryPostResponseDto;
 import org.paz.community.post.entity.PostEntity;
 import org.paz.community.post.repository.PostRepository;
 import org.paz.community.post.service.PostService;
-import org.paz.community.utils.JwtTokenProvider;
+import org.paz.community.security.SecurityContextUtil;
 import org.paz.community.utils.TimeGetter;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -32,7 +32,6 @@ public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
     private final MemberJpaRepository memberJpaRepository;
     private final CommentRepository commentRepository;
-    private final JwtTokenProvider jwtTokenProvider;
 
     // 사진 업로드를 위한 의존성 및 변수 선언
     TimeGetter time = new TimeGetter();
@@ -41,14 +40,13 @@ public class PostServiceImpl implements PostService {
 
     /**
      * 게시글 작성 로직
-     * @param token 작성자 정보를 담기 위한 토큰
      * @param files 게시글의 사진파일
      * @param data 게시글 정보를 담은 Dto
      */
     @Override
-    public void createPost(String token, CreatePostRequestDto data, List<MultipartFile> files) {
+    public void createPost(CreatePostRequestDto data, List<MultipartFile> files) {
         // 게시글 작성자 정보
-        Long userId = (long) jwtTokenProvider.extractId(token);
+        Long userId = SecurityContextUtil.getCurrentUserId();
         MemberEntity memberEntity = memberJpaRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("게시글 생성: 멤버 엔티티 조회 오류"));
 

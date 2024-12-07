@@ -9,7 +9,7 @@ import org.paz.community.member.entity.MemberEntity;
 import org.paz.community.member.repository.MemberJpaRepository;
 import org.paz.community.post.entity.PostEntity;
 import org.paz.community.post.repository.PostRepository;
-import org.paz.community.utils.JwtTokenProvider;
+import org.paz.community.security.SecurityContextUtil;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
@@ -21,18 +21,16 @@ public class CommentServiceImpl implements CommentService {
     private final CommentRepository commentRepository;
     private final MemberJpaRepository memberJpaRepository;
     private final PostRepository postRepository;
-    private final JwtTokenProvider jwtTokenProvider;
 
     /**
      * 댓글 작성 로직
-     * @param token 댓글 작성자 정보를 위한 token
      * @param postId 댓글의 원본 게시글 정보를 위한 postId
      * @param comment 댓글 내용
      */
     @Override
-    public void createComment(String token, Long postId, String comment) {
+    public void createComment(Long postId, String comment) {
         // 게시글 작성자 정보
-        Long userId = (long) jwtTokenProvider.extractId(token);
+        Long userId = SecurityContextUtil.getCurrentUserId();
         MemberEntity memberEntity = memberJpaRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("댓글 생성: 멤버 엔티티 조회 오류"));
 

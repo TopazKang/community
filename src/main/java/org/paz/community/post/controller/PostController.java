@@ -23,10 +23,9 @@ public class PostController {
 
     @PostMapping(value = "/", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
     @Operation(summary = "게시글 작성")
-    public ResponseEntity<Void> createPost(@RequestHeader("Authorization") String token,
-                                           @RequestPart(value="request") CreatePostRequestDto data,
+    public ResponseEntity<Void> createPost(@RequestPart(value="request") CreatePostRequestDto data,
                                            @RequestPart(value = "file", required = false) List<MultipartFile> files){
-        postService.createPost(token.substring(7), data,files);
+        postService.createPost(data,files);
         return ResponseEntity.ok().build();
     }
 

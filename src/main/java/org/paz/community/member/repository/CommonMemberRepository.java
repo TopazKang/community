@@ -26,7 +26,7 @@ public class CommonMemberRepository implements MemberRepository {
     public class LoginRowMapper implements RowMapper<Member> { // 로그인 반환
         @Override
         public Member mapRow(ResultSet rs, int rowNum) throws SQLException{
-            int id = rs.getInt("id");
+            Long id = (long) rs.getInt("id");
             String password = rs.getString("password");
             String profile_image_path = rs.getString("profile_image_path");
 
