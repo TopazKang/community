@@ -1,20 +1,14 @@
 package org.paz.community.member.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.paz.community.member.domain.Member;
 import org.paz.community.member.dto.MemberDto;
-import org.paz.community.dto.TokenDto;
 import org.paz.community.member.repository.CommonMemberRepository;
-import org.paz.community.utils.JwtTokenProvider;
+import org.paz.community.security.SecurityContextUtil;
 import org.paz.community.utils.TimeGetter;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -29,23 +23,15 @@ import java.util.List;
  */
 @Slf4j
 @Service
+@RequiredArgsConstructor
 @Transactional
 public class MemberServiceImpl implements MemberService {
 
 
 
     private final CommonMemberRepository commonMemberRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final AuthenticationManagerBuilder authenticationManagerBuilder;
-    private final JwtTokenProvider jwtTokenProvider;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    @Autowired
-    public MemberServiceImpl(CommonMemberRepository commonMemberRepository, PasswordEncoder passwordEncoder, AuthenticationManagerBuilder authenticationManagerBuilder, JwtTokenProvider jwtTokenProvider) {
-        this.commonMemberRepository = commonMemberRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.authenticationManagerBuilder = authenticationManagerBuilder;
-        this.jwtTokenProvider = jwtTokenProvider;
-    }
 
     // 사진 업로드를 위한 의존성 및 변수 선언
     TimeGetter time = new TimeGetter();
@@ -76,7 +62,7 @@ public class MemberServiceImpl implements MemberService {
             }
         }
 
-        Member member = new Member(dto.getNickname(), dto.getEmail(), passwordEncoder.encode(dto.getPassword()), imagePath);
+        Member member = new Member(dto.getNickname(), dto.getEmail(), bCryptPasswordEncoder.encode(dto.getPassword()), imagePath);
         commonMemberRepository.createUser(member);
     }
 
@@ -98,34 +84,34 @@ public class MemberServiceImpl implements MemberService {
         return result > 0;
     }
 
-    @Override // 로그인
-    public MemberDto.LoginReturn login(MemberDto.Login dto) {
-        String rawPassword = dto.getPassword();
-        Member member = Member.withEmail(dto.getEmail());
-        Member memberInfo = commonMemberRepository.login(member);
-        boolean isValid = passwordEncoder.matches(rawPassword, memberInfo.getPassword());
-
-        // 노아 코드 개선
-        if (!isValid) {
-            throw new RuntimeException("Invalid login");
-        }
-
-        Authentication authentication = new UsernamePasswordAuthenticationToken(member.getEmail(), null, List.of(new SimpleGrantedAuthority("USER")));
-        TokenDto tokenDto = jwtTokenProvider.generateToken(authentication, memberInfo.getId());
-        MemberDto.LoginReturn loginReturn = new MemberDto.LoginReturn(tokenDto.getGrantType(), tokenDto.getAccessToken(), tokenDto.getRefreshToken(), memberInfo.getProfile_image_path());
-        return loginReturn;
-    }
+//    @Override // 로그인
+//    public MemberDto.LoginReturn login(MemberDto.Login dto) {
+//        String rawPassword = dto.getPassword();
+//        Member member = Member.withEmail(dto.getEmail());
+//        Member memberInfo = commonMemberRepository.login(member);
+//        boolean isValid = passwordEncoder.matches(rawPassword, memberInfo.getPassword());
+//
+//        // 노아 코드 개선
+//        if (!isValid) {
+//            throw new RuntimeException("Invalid login");
+//        }
+//
+//        Authentication authentication = new UsernamePasswordAuthenticationToken(member.getEmail(), null, List.of(new SimpleGrantedAuthority("USER")));
+//        TokenDto tokenDto = jwtTokenProvider.generateToken(authentication, memberInfo.getId());
+//        MemberDto.LoginReturn loginReturn = new MemberDto.LoginReturn(tokenDto.getGrantType(), tokenDto.getAccessToken(), tokenDto.getRefreshToken(), memberInfo.getProfile_image_path());
+//        return loginReturn;
+//    }
 
     @Override
-    public MemberDto.Info readInfo(String token) {
-        Member member = new Member(jwtTokenProvider.extractId(token));
+    public MemberDto.Info readInfo() {
+        Member member = new Member(SecurityContextUtil.getCurrentUserId());
         Member res = commonMemberRepository.readInfo(member);
         MemberDto.Info result = new MemberDto.Info(res.getNickname(), res.getEmail());
         return result;
     }
 
     @Override
-    public void modifyInfo(String token, MemberDto.ModifyInfo dto, List<MultipartFile> files) {
+    public void modifyInfo(MemberDto.ModifyInfo dto, List<MultipartFile> files) {
         if (files != null) {
             for (MultipartFile file : files) {
                 String originalName = file.getOriginalFilename();
@@ -144,22 +130,22 @@ public class MemberServiceImpl implements MemberService {
         }
 
 
-        int userId = jwtTokenProvider.extractId(token);
+        Long userId = SecurityContextUtil.getCurrentUserId();
         Member member = Member.withModifyInfo(userId, dto.getNickname(), imagePath);
         commonMemberRepository.modifyInfo(member);
     }
 
     @Override
-    public void changePassword(String token, MemberDto.ChangePassword dto) {
-        int userId = jwtTokenProvider.extractId(token);
-        Member member = new Member(userId, passwordEncoder.encode(dto.getPassword()));
+    public void changePassword(MemberDto.ChangePassword dto) {
+        Long userId = SecurityContextUtil.getCurrentUserId();
+        Member member = new Member(userId, bCryptPasswordEncoder.encode(dto.getPassword()));
         commonMemberRepository.changePassword(member);
 
     }
 
     @Override
-    public void deleteAccount(String token) {
-        int userId = jwtTokenProvider.extractId(token);
+    public void deleteAccount() {
+        Long userId = SecurityContextUtil.getCurrentUserId();
         Member member = new Member(userId);
         commonMemberRepository.deleteMember(member);
     }

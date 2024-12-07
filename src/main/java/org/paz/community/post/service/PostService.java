@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface PostService {
     // 게시글 작성
-    void createPost(String token, CreatePostRequestDto data, List<MultipartFile> files);
+    void createPost(CreatePostRequestDto data, List<MultipartFile> files);
     // 전체 게시글 조회
     List<ReadSummaryPostResponseDto> readAllPost();
     // 단일 게시글 조회

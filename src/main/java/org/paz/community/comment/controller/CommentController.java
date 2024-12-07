@@ -16,10 +16,9 @@ public class CommentController {
 
     @PostMapping(value="/{postId}")
     @Operation(summary = "댓글 작성")
-    public ResponseEntity<Void> createComment(@RequestHeader("Authorization") String token,
-                                              @PathVariable Long postId,
+    public ResponseEntity<Void> createComment(@PathVariable Long postId,
                                               @RequestBody String comment){
-        commentService.createComment(token.substring(7), postId, comment);
+        commentService.createComment(postId, comment);
 
         return ResponseEntity.ok().build();
     }

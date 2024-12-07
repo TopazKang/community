@@ -16,15 +16,15 @@ public interface MemberService{
     // 닉네임 중복확인
     boolean nicknameChk(Member member);
     // 로그인
-    MemberDto.LoginReturn login(MemberDto.Login dto);
+    // MemberDto.LoginReturn login(MemberDto.Login dto);
     // 로그아웃
 
     // find by id
-    MemberDto.Info readInfo(String token);
+    MemberDto.Info readInfo();
     // 회원정보 수정
-    void modifyInfo(String token, MemberDto.ModifyInfo dto, List<MultipartFile> file);
+    void modifyInfo(MemberDto.ModifyInfo dto, List<MultipartFile> file);
     // 비밀번호 변경
-    void changePassword(String token, MemberDto.ChangePassword dto);
+    void changePassword(MemberDto.ChangePassword dto);
     // 회원 탈퇴
-    void deleteAccount(String token);
+    void deleteAccount();
 }
