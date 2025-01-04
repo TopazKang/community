@@ -12,6 +12,9 @@ public class ReadOnePostResponseDto {
     private Long postId;
     private String postTitle;
     private String postImage;
+    private String category;
+    private String tags;
+    private String postContent;
     private LocalDateTime postCreatedAt;
     private LocalDateTime postUpdatedAt;
     private int likesCount;
@@ -26,6 +29,9 @@ public class ReadOnePostResponseDto {
         this.postId = postEntity.getId();
         this.postTitle = postEntity.getTitle();
         this.postImage = postEntity.getPostImagePath();
+        this.category = postEntity.getCategory();
+        this.tags = postEntity.getTags();
+        this.postContent = postEntity.getContent();
         this.postCreatedAt = postEntity.getCreatedAt();
         this.postUpdatedAt = postEntity.getUpdatedAt();
         this.likesCount = postEntity.getLikesCount();

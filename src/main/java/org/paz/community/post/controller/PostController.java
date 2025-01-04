@@ -21,11 +21,10 @@ public class PostController {
 
     private final PostServiceImpl postService;
 
-    @PostMapping(value = "/", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    @PostMapping(value = "/")
     @Operation(summary = "게시글 작성")
-    public ResponseEntity<Void> createPost(@RequestPart(value="request") CreatePostRequestDto data,
-                                           @RequestPart(value = "file", required = false) List<MultipartFile> files){
-        postService.createPost(data,files);
+    public ResponseEntity<Void> createPost(@RequestBody CreatePostRequestDto data){
+        postService.createPost(data);
         return ResponseEntity.ok().build();
     }
 
@@ -61,5 +60,12 @@ public class PostController {
         postService.deletePost(postId);
 
         return ResponseEntity.ok().build();
+    }
+
+    @PostMapping(value = "/image", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    @Operation(summary = "이미지 업로드")
+    public ResponseEntity<String> uploadImage(@RequestPart(value = "file", required = false) MultipartFile file){
+        String response = postService.uploadImage(file);
+        return ResponseEntity.ok(response);
     }
 }

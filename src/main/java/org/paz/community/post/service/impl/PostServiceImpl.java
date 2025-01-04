@@ -35,7 +35,7 @@ public class PostServiceImpl implements PostService {
 
     // 사진 업로드를 위한 의존성 및 변수 선언
     TimeGetter time = new TimeGetter();
-    private String uploadPath = "src/main/resources/static/images/profile";
+    private String uploadPath = "src/main/resources/static/images/post";
     String imagePath;
 
     /**
@@ -44,29 +44,11 @@ public class PostServiceImpl implements PostService {
      * @param data 게시글 정보를 담은 Dto
      */
     @Override
-    public void createPost(CreatePostRequestDto data, List<MultipartFile> files) {
+    public void createPost(CreatePostRequestDto data) {
         // 게시글 작성자 정보
         Long userId = SecurityContextUtil.getCurrentUserId();
         MemberEntity memberEntity = memberJpaRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("게시글 생성: 멤버 엔티티 조회 오류"));
-
-        // files가 null이 아니면 사진을 저장하고 경로 저장
-        if (files != null) {
-            for(MultipartFile file : files) {
-                String originalName = file.getOriginalFilename();
-                imagePath = "/images/post/" + time.getFormattedCurrentTime() + originalName;
-                Path savePath = Paths.get(uploadPath, time.getFormattedCurrentTime() + originalName);
-
-                try {
-                    Files.createDirectories((savePath.getParent()));
-                    file.transferTo(savePath);
-                } catch (IOException e) {
-                    System.out.println(e + "이미지 저장을 위한 경로를 찾을 수 없음.");
-                }
-            }
-        } else {
-            imagePath = null;
-        }
 
         // 빌더 패턴을 통해서 게시글 엔티티 생성
         // fix: 임시로 빌더패턴에서 기본값 0 삽입(count 삼형제)
@@ -78,6 +60,8 @@ public class PostServiceImpl implements PostService {
                 .likesCount(0)
                 .hitsCount(0)
                 .repliesCount(0)
+                .category(data.getCategory())
+                .tags(data.getTags())
                 .build();
 
         // 게시글 DB 저장
@@ -134,6 +118,20 @@ public class PostServiceImpl implements PostService {
         PostEntity postEntity = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("게시글 수정: 단일 게시글 조회 오류"));
 
+        MemberEntity memberEntity = postEntity.getMemberEntity();
+        Long savedId = memberEntity.getId();
+        Long authenticatedId = SecurityContextUtil.getCurrentUserId();
+
+        if(savedId == null || authenticatedId == null){
+            // fix
+            System.out.println("인증상태 불량");
+        }
+
+        if(!Objects.equals(savedId, authenticatedId)){
+            // fix
+            System.out.println("게시물 작성자 불일치");
+        }
+
         // files가 null이 아니면 사진을 저장하고 경로 저장
         if (files != null) {
             for(MultipartFile file : files) {
@@ -165,6 +163,16 @@ public class PostServiceImpl implements PostService {
             postEntity.modifyContent(data.getContent());
         }
 
+        // 원본과 새로운 내용이 차이가 있으면 새로운 내용으로 엔티티 값 변경
+        if (!Objects.equals(data.getCategory(), postEntity.getCategory())) {
+            postEntity.modifyCategory(data.getCategory());
+        }
+
+        // 원본과 새로운 내용이 차이가 있으면 새로운 내용으로 엔티티 값 변경
+        if (!Objects.equals(data.getTags(), postEntity.getTags())) {
+            postEntity.modifyTags(data.getTags());
+        }
+
         // 수정 게시글 DB 저장
         postRepository.save(postEntity);
     }
@@ -180,10 +188,46 @@ public class PostServiceImpl implements PostService {
         PostEntity postEntity = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("게시글 삭제: 게시글 엔티티 조회 오류"));
 
+        MemberEntity memberEntity = postEntity.getMemberEntity();
+        Long savedId = memberEntity.getId();
+        Long authenticatedId = SecurityContextUtil.getCurrentUserId();
+
+        if(savedId == null || authenticatedId == null){
+            // fix
+            System.out.println("인증상태 불량");
+        }
+
+        if(!Objects.equals(savedId, authenticatedId)){
+            // fix
+            System.out.println("게시물 작성자 불일치");
+        }
+
         // Base엔티티의 소프트 삭제 메서드를 호출
         postEntity.softDelete();
 
         // 소프트 삭제를 진행한 엔티티 DB에 반영
         postRepository.save(postEntity);
+    }
+
+    @Override
+    public String uploadImage(MultipartFile image) throws IllegalStateException {
+        // files가 null이 아니면 사진을 저장하고 경로 저장
+        if (image != null) {
+            String originalName = image.getOriginalFilename();
+            imagePath = "/images/post/" + time.getFormattedCurrentTime() + originalName;
+            Path savePath = Paths.get(uploadPath, time.getFormattedCurrentTime() + originalName);
+
+            try {
+                Files.createDirectories((savePath.getParent()));
+                image.transferTo(savePath);
+            } catch (IOException e) {
+                System.out.println(e + "이미지 저장을 위한 경로를 찾을 수 없음.");
+            }
+
+            return imagePath;
+        }
+        else {
+            throw new IllegalArgumentException("이미지 업로드 에러");
+        }
     }
 }
