@@ -7,6 +7,7 @@ import org.paz.community.security.JwtUtil;
 import org.paz.community.security.LoginFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -15,6 +16,9 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
@@ -44,6 +48,8 @@ public class SecurityConfig {
 
                 .formLogin((auth) -> auth.disable())
 
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+
                 .sessionManagement((session) ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
@@ -52,14 +58,28 @@ public class SecurityConfig {
                                 .requestMatchers("/users/login","/login").permitAll()
                                 .requestMatchers("/swagger-ui/**","/v3/api-docs/**").permitAll() // 스웨거 접근 권한 오픈
                                 .requestMatchers("/api/members/","/api/members/nickname","/api/members/email").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/api/posts/**").permitAll()
                                 .requestMatchers("/images/profile/**","/images/post/**").permitAll()
                                 .anyRequest().authenticated())
 
                 .addFilterBefore(new JwtFilter(jwtUtil), LoginFilter.class)
 
                 .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil, memberJpaRepository), UsernamePasswordAuthenticationFilter.class);
-
         return http.build();
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.addAllowedOrigin("http://localhost:3000");
+        configuration.addAllowedMethod("*");
+        configuration.addAllowedHeader("*");
+        configuration.addExposedHeader("Authorization");
+        configuration.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 
 }
