@@ -5,6 +5,7 @@ import org.paz.community.comment.dto.ReadOneCommentResponseDto;
 import org.paz.community.comment.entity.CommentEntity;
 import org.paz.community.comment.repository.CommentRepository;
 import org.paz.community.comment.service.CommentService;
+import org.paz.community.member.domain.Member;
 import org.paz.community.member.entity.MemberEntity;
 import org.paz.community.member.repository.MemberJpaRepository;
 import org.paz.community.post.entity.PostEntity;
@@ -72,6 +73,20 @@ public class CommentServiceImpl implements CommentService {
         CommentEntity commentEntity = commentRepository.findById(commentId)
                 .orElseThrow(() -> new IllegalArgumentException("댓글 수정: 댓글 엔티티 조회 오류"));
 
+        MemberEntity memberEntity = commentEntity.getMemberEntity();
+        Long savedId = memberEntity.getId();
+        Long authenticatedId = SecurityContextUtil.getCurrentUserId();
+
+        if(savedId == null || authenticatedId == null){
+            // fix
+            System.out.println("인증상태 불량");
+        }
+
+        if(!Objects.equals(savedId, authenticatedId)){
+            // fix
+            System.out.println("게시물 작성자 불일치");
+        }
+
         // 원본 댓글과 수정 댓글이 일치하지 않으면 엔티티 수정
         if(!Objects.equals(comment, commentEntity.getComment())){
             commentEntity.modifyComment(comment);
@@ -90,6 +105,20 @@ public class CommentServiceImpl implements CommentService {
         // 댓글 삭제를 위해 원본 엔티티 조회(soft 삭제)
         CommentEntity commentEntity = commentRepository.findById(commentId)
                 .orElseThrow(() -> new IllegalArgumentException("댓글 삭제: 댓글 엔티티 조회 오류"));
+
+        MemberEntity memberEntity = commentEntity.getMemberEntity();
+        Long savedId = memberEntity.getId();
+        Long authenticatedId = SecurityContextUtil.getCurrentUserId();
+
+        if(savedId == null || authenticatedId == null){
+            // fix
+            System.out.println("인증상태 불량");
+        }
+
+        if(!Objects.equals(savedId, authenticatedId)){
+            // fix
+            System.out.println("게시물 작성자 불일치");
+        }
 
         // Base엔티티의 소프트 삭제 메서드 호출
         commentEntity.softDelete();
