@@ -21,7 +21,7 @@ public class MemberController {
 
     @PostMapping(value = "/", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE}) // 회원가입
     @Operation(summary = "회원가입")
-    public String signIn(@RequestPart(value="request") MemberDto.SignIn dto, @RequestPart(value="file", required = false) List<MultipartFile> files){
+    public String signIn(@RequestPart(value="request") MemberDto.SignUp dto, @RequestPart(value="file", required = false) List<MultipartFile> files){
         System.out.println("회원가입");
         commonMemberService.createMember(dto, files);
         return "success";

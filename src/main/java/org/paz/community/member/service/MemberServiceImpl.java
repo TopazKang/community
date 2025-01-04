@@ -46,7 +46,7 @@ public class MemberServiceImpl implements MemberService {
      * @param files 프로필이
      */
     @Override // 회원가입
-    public void createMember(MemberDto.SignIn dto, List<MultipartFile> files) {
+    public void createMember(MemberDto.SignUp dto, List<MultipartFile> files) {
         for (MultipartFile file : files) {
             String originalName = file.getOriginalFilename();
             imagePath = "/images/profile/" + time.getFormattedCurrentTime() + originalName;
@@ -62,7 +62,7 @@ public class MemberServiceImpl implements MemberService {
             }
         }
 
-        Member member = new Member(dto.getNickname(), dto.getEmail(), bCryptPasswordEncoder.encode(dto.getPassword()), imagePath);
+        Member member = new Member(dto.getName(), dto.getNickname(), dto.getEmail(), bCryptPasswordEncoder.encode(dto.getPassword()), imagePath);
         commonMemberRepository.createUser(member);
     }
 
@@ -106,7 +106,7 @@ public class MemberServiceImpl implements MemberService {
     public MemberDto.Info readInfo() {
         Member member = new Member(SecurityContextUtil.getCurrentUserId());
         Member res = commonMemberRepository.readInfo(member);
-        MemberDto.Info result = new MemberDto.Info(res.getNickname(), res.getEmail());
+        MemberDto.Info result = new MemberDto.Info(res.getNickname(), res.getEmail(), res.getProfile_image_path());
         return result;
     }
 

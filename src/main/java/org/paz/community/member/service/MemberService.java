@@ -9,7 +9,7 @@ import java.util.List;
 public interface MemberService{
 
     // 회원가입
-    void createMember(MemberDto.SignIn dto, List<MultipartFile> file);
+    void createMember(MemberDto.SignUp dto, List<MultipartFile> file);
 
     // 이메일 중복 확인\
     boolean emailChk(Member member);
