@@ -6,10 +6,7 @@ import org.paz.community.comment.entity.CommentEntity;
 import org.paz.community.comment.repository.CommentRepository;
 import org.paz.community.member.entity.MemberEntity;
 import org.paz.community.member.repository.MemberJpaRepository;
-import org.paz.community.post.dto.CreatePostRequestDto;
-import org.paz.community.post.dto.ModifyPostRequestDto;
-import org.paz.community.post.dto.ReadOnePostResponseDto;
-import org.paz.community.post.dto.ReadSummaryPostResponseDto;
+import org.paz.community.post.dto.*;
 import org.paz.community.post.entity.PostEntity;
 import org.paz.community.post.repository.PostRepository;
 import org.paz.community.post.service.PostService;
@@ -90,12 +87,14 @@ public class PostServiceImpl implements PostService {
      * @return List<ReadSummaryPostResponseDto> 전체 게시글 조회용 Dto
      */
     @Override
-    public List<ReadSummaryPostResponseDto> readAllPostWithPage(Pageable pageable) {
+    public ReadSummaryWithPagedPostDto readAllPostWithPage(Pageable pageable) {
+        Long count = postRepository.countByDeletedAtIsNull();
         Page<PostEntity> postEntities = postRepository.findByDeletedAtIsNull(pageable);
-
-        return postEntities.getContent().stream()
+        List<ReadSummaryPostResponseDto> posts = postEntities.getContent().stream()
                 .map(ReadSummaryPostResponseDto::new)
                 .toList();
+
+        return new ReadSummaryWithPagedPostDto(count, posts);
     }
 
     /**

@@ -1,11 +1,8 @@
 package org.paz.community.post.service;
 
-import org.paz.community.post.dto.ModifyPostRequestDto;
+import org.paz.community.post.dto.*;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
-import org.paz.community.post.dto.CreatePostRequestDto;
-import org.paz.community.post.dto.ReadOnePostResponseDto;
-import org.paz.community.post.dto.ReadSummaryPostResponseDto;
 
 import java.util.List;
 
@@ -15,7 +12,7 @@ public interface PostService {
     // 전체 게시글 조회
     List<ReadSummaryPostResponseDto> readAllPost();
     // 전체 게시글 페이징 조회
-    List<ReadSummaryPostResponseDto> readAllPostWithPage(Pageable pageable);
+    ReadSummaryWithPagedPostDto readAllPostWithPage(Pageable pageable);
     // 단일 게시글 조회
     ReadOnePostResponseDto readOnePost(Long postId);
     // 게시글 수정

@@ -2,10 +2,7 @@ package org.paz.community.post.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
-import org.paz.community.post.dto.CreatePostRequestDto;
-import org.paz.community.post.dto.ModifyPostRequestDto;
-import org.paz.community.post.dto.ReadOnePostResponseDto;
-import org.paz.community.post.dto.ReadSummaryPostResponseDto;
+import org.paz.community.post.dto.*;
 import org.paz.community.post.service.impl.PostServiceImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
@@ -39,8 +36,8 @@ public class PostController {
 
     @GetMapping(value = "/paged")
     @Operation(summary = "게시글 페이징 조회")
-    public ResponseEntity<List<ReadSummaryPostResponseDto>> readAllPostWithPage(Pageable pageable){
-        List<ReadSummaryPostResponseDto> response = postService.readAllPostWithPage(pageable);
+    public ResponseEntity<ReadSummaryWithPagedPostDto> readAllPostWithPage(Pageable pageable){
+        ReadSummaryWithPagedPostDto response = postService.readAllPostWithPage(pageable);
 
         return ResponseEntity.ok(response);
     }
