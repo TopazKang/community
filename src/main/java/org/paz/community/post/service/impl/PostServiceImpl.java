@@ -15,6 +15,8 @@ import org.paz.community.post.repository.PostRepository;
 import org.paz.community.post.service.PostService;
 import org.paz.community.security.SecurityContextUtil;
 import org.paz.community.utils.TimeGetter;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -40,7 +42,6 @@ public class PostServiceImpl implements PostService {
 
     /**
      * 게시글 작성 로직
-     * @param files 게시글의 사진파일
      * @param data 게시글 정보를 담은 Dto
      */
     @Override
@@ -79,6 +80,20 @@ public class PostServiceImpl implements PostService {
 
         // 엔티티 list를 토대로 게시글 dto 리스트를 반환
         return postEntities.stream()
+                .map(ReadSummaryPostResponseDto::new)
+                .toList();
+    }
+
+    /**
+     * 전체 게시글 페이징 조회 로직
+     * @param pageable 페이징 처리를 위한 pageable 객체
+     * @return List<ReadSummaryPostResponseDto> 전체 게시글 조회용 Dto
+     */
+    @Override
+    public List<ReadSummaryPostResponseDto> readAllPostWithPage(Pageable pageable) {
+        Page<PostEntity> postEntities = postRepository.findByDeletedAtIsNull(pageable);
+
+        return postEntities.getContent().stream()
                 .map(ReadSummaryPostResponseDto::new)
                 .toList();
     }

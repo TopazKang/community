@@ -7,6 +7,7 @@ import org.paz.community.post.dto.ModifyPostRequestDto;
 import org.paz.community.post.dto.ReadOnePostResponseDto;
 import org.paz.community.post.dto.ReadSummaryPostResponseDto;
 import org.paz.community.post.service.impl.PostServiceImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -32,6 +33,14 @@ public class PostController {
     @Operation(summary = "전체 게시글 조회")
     public ResponseEntity<List<ReadSummaryPostResponseDto>> readAllPost(){
         List<ReadSummaryPostResponseDto> response = postService.readAllPost();
+
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping(value = "/paged")
+    @Operation(summary = "게시글 페이징 조회")
+    public ResponseEntity<List<ReadSummaryPostResponseDto>> readAllPostWithPage(Pageable pageable){
+        List<ReadSummaryPostResponseDto> response = postService.readAllPostWithPage(pageable);
 
         return ResponseEntity.ok(response);
     }
