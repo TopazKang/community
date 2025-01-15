@@ -84,7 +84,7 @@ public class PostServiceImpl implements PostService {
     /**
      * 전체 게시글 페이징 조회 로직
      * @param pageable 페이징 처리를 위한 pageable 객체
-     * @return List<ReadSummaryPostResponseDto> 전체 게시글 조회용 Dto
+     * @return ReadSummaryWithPagedPostDto 전체 게시글 조회용 Dto
      */
     @Override
     public ReadSummaryWithPagedPostDto readAllPostWithPage(Pageable pageable) {
