@@ -7,7 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.paz.community.global.entity.BaseEntity;
 import org.paz.community.member.entity.MemberEntity;
-import org.paz.community.vote.post.entity.PostEntity;
+import org.paz.community.vote.post.entity.VotablePostEntity;
 
 @Entity
 @Getter
@@ -27,6 +27,6 @@ public class VoteEntity extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
-    private PostEntity postEntity;
+    private VotablePostEntity votablepostEntity;
 
 }
