@@ -213,4 +213,22 @@ public class VotablePostServiceImpl implements VotablePostService {
         votablePostRepository.save(votablePostEntity);
 
     }
+
+    /**
+     *  게시글 투표 카운트 증가
+     * @param postId 게시글 id
+     */
+    @Override
+    public void increaseVoteCount(Long postId) {
+        // 게시글의 투표 수 칼럼 +1 증가를 위한 원본 엔티티 조회
+        VotablePostEntity votablePostEntity = votablePostRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("게시글 투표 수 +1: 게시글 원본 엔티티 조회 오류"));
+
+        // 엔티티 내장 세터 메서드 호출
+        votablePostEntity.increaseVotesCount();
+
+        // 득표 수 추가 DB 반영
+        votablePostRepository.save(votablePostEntity);
+    }
+
 }

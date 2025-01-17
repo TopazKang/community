@@ -41,6 +41,9 @@ public class VotablePostEntity extends BaseEntity {
     @Column(name="replies_count", nullable = false)
     private Integer repliesCount = 0;
 
+    @Column(name="votes_count", nullable = false)
+    private Integer votesCount = 0;
+
     @Column(name="tags")
     private String tags;
 
@@ -97,5 +100,12 @@ public class VotablePostEntity extends BaseEntity {
      */
     public void modifyTags(String tags){
         this.tags = tags;
+    }
+
+    /**
+     * 게시글 득표 수 추가 Setter
+     */
+    public void increaseVotesCount() {
+        this.votesCount = this.votesCount + 1;
     }
 }
