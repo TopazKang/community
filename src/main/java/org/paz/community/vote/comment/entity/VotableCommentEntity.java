@@ -7,7 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.paz.community.global.entity.BaseEntity;
 import org.paz.community.member.entity.MemberEntity;
-import org.paz.community.vote.post.entity.PostEntity;
+import org.paz.community.vote.post.entity.VotablePostEntity;
 
 @Entity
 @Getter
@@ -15,7 +15,7 @@ import org.paz.community.vote.post.entity.PostEntity;
 @AllArgsConstructor
 @Builder
 @Table(name="comment_votable")
-public class CommentEntity extends BaseEntity {
+public class VotableCommentEntity extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,7 +26,7 @@ public class CommentEntity extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
-    private PostEntity postEntity;
+    private VotablePostEntity votablePostEntity;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")

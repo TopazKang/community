@@ -2,7 +2,7 @@ package org.paz.community.vote.comment.service;
 
 import org.paz.community.vote.comment.dto.ReadOneVotableCommentDto;
 
-public interface CommentService {
+public interface VotableCommentService {
     // 투표 댓글 생성
     void createVotableComment(Long postId, String comment);
     // 댓글 조회

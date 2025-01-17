@@ -2,7 +2,7 @@ package org.paz.community.vote.comment.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.paz.community.vote.comment.entity.CommentEntity;
+import org.paz.community.vote.comment.entity.VotableCommentEntity;
 
 import java.time.LocalDateTime;
 
@@ -16,7 +16,7 @@ public class ReadOneVotableCommentDto {
     private String userNickname;
     private String userProfileImagePath;
 
-    public ReadOneVotableCommentDto(CommentEntity commentEntity){
+    public ReadOneVotableCommentDto(VotableCommentEntity commentEntity){
         this.commentId = commentEntity.getId();
         this.comment = commentEntity.getComment();
         this.createdAt = commentEntity.getCreatedAt();

@@ -1,17 +1,17 @@
 package org.paz.community.vote.post.service.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.paz.community.comment.dto.ReadOneCommentResponseDto;
-import org.paz.community.vote.comment.entity.CommentEntity;
-import org.paz.community.vote.comment.repository.CommentRepository;
+import org.paz.community.vote.comment.dto.ReadOneVotableCommentDto;
+import org.paz.community.vote.comment.entity.VotableCommentEntity;
+import org.paz.community.vote.comment.repository.VotableCommentRepository;
 import org.paz.community.member.entity.MemberEntity;
 import org.paz.community.member.repository.MemberJpaRepository;
-import org.paz.community.vote.post.entity.PostEntity;
+import org.paz.community.vote.post.entity.VotablePostEntity;
 import org.paz.community.security.SecurityContextUtil;
 import org.paz.community.utils.TimeGetter;
 import org.paz.community.vote.post.dto.*;
-import org.paz.community.vote.post.repository.PostRepository;
-import org.paz.community.vote.post.service.PostService;
+import org.paz.community.vote.post.repository.VotablePostRepository;
+import org.paz.community.vote.post.service.VotablePostService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -26,11 +26,11 @@ import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
-public class PostServiceImpl implements PostService {
+public class VotablePostServiceImpl implements VotablePostService {
 
-    private PostRepository postRepository;
-    private MemberJpaRepository memberJpaRepository;
-    private CommentRepository commentRepository;
+    private final VotablePostRepository votablePostRepository;
+    private final MemberJpaRepository memberJpaRepository;
+    private final VotableCommentRepository votableCommentRepository;
 
     // 이미지 업로드를 위한 의존성 및 변수 선언
     TimeGetter time = new TimeGetter();
@@ -65,7 +65,7 @@ public class PostServiceImpl implements PostService {
         }
         // 빌더 패턴을 통해서 게시글 엔티티 생성
         // fix: 임시로 빌더패턴에 기본값 0 삼입(count 삼형제) - postService 전체 한번에 수정
-        PostEntity postEntity = PostEntity.builder()
+        VotablePostEntity votablePostEntity = VotablePostEntity.builder()
                 .memberEntity(memberEntity)
                 .title(createVotablePostDto.getTitle())
                 .content(createVotablePostDto.getContent())
@@ -81,7 +81,7 @@ public class PostServiceImpl implements PostService {
                 .build();
 
         // 게시글 DB 저장
-        postRepository.save(postEntity);
+        votablePostRepository.save(votablePostEntity);
 
     }
 
@@ -92,7 +92,7 @@ public class PostServiceImpl implements PostService {
     @Override
     public List<ReadSummaryVotablePostDto> readAllVotablePost() {
         // 게시글 엔티티에 전체 게시글 정보 조회
-        List<PostEntity> postEntities = postRepository.findByDeletedAtIsNull();
+        List<VotablePostEntity> postEntities = votablePostRepository.findByDeletedAtIsNull();
 
         return postEntities.stream()
                 .map(ReadSummaryVotablePostDto::new)
@@ -106,8 +106,8 @@ public class PostServiceImpl implements PostService {
      */
     @Override
     public ReadSummaryWithPagedVotablePostDto readAllVotablePostWithPage(Pageable pageable) {
-        Long count = postRepository.countByDeletedAtIsNull();
-        Page<PostEntity> postEntities = postRepository.findByDeletedAtIsNull(pageable);
+        Long count = votablePostRepository.countByDeletedAtIsNull();
+        Page<VotablePostEntity> postEntities = votablePostRepository.findByDeletedAtIsNull(pageable);
         List<ReadSummaryVotablePostDto> posts = postEntities.getContent().stream()
                 .map(ReadSummaryVotablePostDto::new)
                 .toList();
@@ -123,11 +123,11 @@ public class PostServiceImpl implements PostService {
     @Override
     public ReadOneVotablePostDto readOneVotablePost(Long postId) {
         // 게시글 엔티티에 postId에 해당하는 게시글 조회
-        PostEntity postEntity = postRepository.findById(postId)
+        VotablePostEntity votablePostEntity = votablePostRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("단일 게시글 조회 오류"));
 
         // 댓글 엔티티 리스트에 postId에 대한 모든 댓글 조회
-        List<CommentEntity> commentEntities = commentRepository.findByPostEntityAndDeletedAtIsNull(postEntity);
+        List<VotableCommentEntity> commentEntities = votableCommentRepository.findByVotablePostEntityAndDeletedAtIsNull(votablePostEntity);
 
         // 댓글 조회용 dto 리스트에 엔티티 기준으로 담은 데이터 할당
         List<ReadOneVotableCommentDto> comments = commentEntities.stream()
@@ -135,7 +135,7 @@ public class PostServiceImpl implements PostService {
                 .toList();
 
         // 게시글 및 댓글 정보 반환(Dto)
-        return new ReadOneVotablePostDto(postEntity, comments);
+        return new ReadOneVotablePostDto(votablePostEntity, comments);
     }
 
     /**
@@ -146,10 +146,10 @@ public class PostServiceImpl implements PostService {
     @Override
     public void modifyVotablePost(Long postId, ModifyVotablePostDto modifyVotablePostDto) {
         // 게시글 원본 데이터 조회
-        PostEntity postEntity = postRepository.findById(postId)
+        VotablePostEntity votablePostEntity = votablePostRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("게시글 수정: 단일 게시글 조회 오류"));
 
-        MemberEntity memberEntity = postEntity.getMemberEntity();
+        MemberEntity memberEntity = votablePostEntity.getMemberEntity();
         Long savedId = memberEntity.getId();
         Long authenticatedId = SecurityContextUtil.getCurrentUserId();
 
@@ -164,22 +164,22 @@ public class PostServiceImpl implements PostService {
         }
 
         // 게시글 제목 수정시 반영 (dirtyChecking)
-        if(!Objects.equals(postEntity.getTitle(), modifyVotablePostDto.getTitle())){
-            postEntity.modityTitle(modifyVotablePostDto.getTitle());
+        if(!Objects.equals(votablePostEntity.getTitle(), modifyVotablePostDto.getTitle())){
+            votablePostEntity.modityTitle(modifyVotablePostDto.getTitle());
         }
 
         // 게시글 내용 수정시 반영
-        if(!Objects.equals(postEntity.getContent(), modifyVotablePostDto.getContent())){
-            postEntity.modifyContent(modifyVotablePostDto.getContent());
+        if(!Objects.equals(votablePostEntity.getContent(), modifyVotablePostDto.getContent())){
+            votablePostEntity.modifyContent(modifyVotablePostDto.getContent());
         }
 
         // 게시글 태그 수정시 반영
-        if(!Objects.equals(postEntity.getTags(), modifyVotablePostDto.getTags())){
-            postEntity.modifyTags(modifyVotablePostDto.getTags());
+        if(!Objects.equals(votablePostEntity.getTags(), modifyVotablePostDto.getTags())){
+            votablePostEntity.modifyTags(modifyVotablePostDto.getTags());
         }
 
         // 수정된 게시글 DB 반영
-        postRepository.save(postEntity);
+        votablePostRepository.save(votablePostEntity);
     }
 
     /**
@@ -189,10 +189,10 @@ public class PostServiceImpl implements PostService {
     @Override
     public void deleteVotablePost(Long postId) {
         // 게시글 삭제를 위해 엔티티 조회(soft 제거)
-        PostEntity postEntity = postRepository.findById(postId)
+        VotablePostEntity votablePostEntity = votablePostRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("게시글 삭제: 게시글 엔티티 조회 오류"));
 
-        MemberEntity memberEntity = postEntity.getMemberEntity();
+        MemberEntity memberEntity = votablePostEntity.getMemberEntity();
         Long savedId = memberEntity.getId();
         Long authenticatedId = SecurityContextUtil.getCurrentUserId();
 
@@ -207,10 +207,10 @@ public class PostServiceImpl implements PostService {
         }
 
         // BaseEntity의 소프트 삭제 메서드 호출
-        postEntity.softDelete();
+        votablePostEntity.softDelete();
 
         // 소프트 삭제 DB에 반영
-        postRepository.save(postEntity);
+        votablePostRepository.save(votablePostEntity);
 
     }
 }

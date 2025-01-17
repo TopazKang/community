@@ -1,7 +1,7 @@
 package org.paz.community.vote.post.dto;
 
 import lombok.Getter;
-import org.paz.community.vote.post.entity.PostEntity;
+import org.paz.community.vote.post.entity.VotablePostEntity;
 
 @Getter
 public class ReadSummaryVotablePostDto {
@@ -9,9 +9,9 @@ public class ReadSummaryVotablePostDto {
     private String postImagePath;
     private int likesCount;
 
-    public ReadSummaryVotablePostDto(PostEntity postEntity){
-        this.postId = postEntity.getId();
-        this.postImagePath = postEntity.getPostImagePath();
-        this.likesCount = postEntity.getLikesCount();
+    public ReadSummaryVotablePostDto(VotablePostEntity votablePostEntity){
+        this.postId = votablePostEntity.getId();
+        this.postImagePath = votablePostEntity.getPostImagePath();
+        this.likesCount = votablePostEntity.getLikesCount();
     }
 }

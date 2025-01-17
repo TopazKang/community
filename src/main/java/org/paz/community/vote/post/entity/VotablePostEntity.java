@@ -7,7 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.paz.community.global.entity.BaseEntity;
 import org.paz.community.member.entity.MemberEntity;
-import org.paz.community.vote.comment.entity.CommentEntity;
+import org.paz.community.vote.comment.entity.VotableCommentEntity;
 
 import java.util.List;
 
@@ -17,7 +17,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @Table(name="post_votable")
-public class PostEntity extends BaseEntity {
+public class VotablePostEntity extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -60,8 +60,8 @@ public class PostEntity extends BaseEntity {
     @JoinColumn(name="user_id")
     private MemberEntity memberEntity;
 
-    @OneToMany(mappedBy = "postEntity", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<CommentEntity> commentEntities;
+    @OneToMany(mappedBy = "votablePostEntity", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<VotableCommentEntity> commentEntities;
 
 
 

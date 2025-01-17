@@ -1,27 +1,26 @@
 package org.paz.community.vote.comment.service.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.paz.community.member.domain.Member;
 import org.paz.community.member.entity.MemberEntity;
 import org.paz.community.member.repository.MemberJpaRepository;
 import org.paz.community.security.SecurityContextUtil;
 import org.paz.community.vote.comment.dto.ReadOneVotableCommentDto;
-import org.paz.community.vote.comment.entity.CommentEntity;
-import org.paz.community.vote.comment.repository.CommentRepository;
-import org.paz.community.vote.comment.service.CommentService;
-import org.paz.community.vote.post.entity.PostEntity;
-import org.paz.community.vote.post.repository.PostRepository;
+import org.paz.community.vote.comment.entity.VotableCommentEntity;
+import org.paz.community.vote.comment.repository.VotableCommentRepository;
+import org.paz.community.vote.comment.service.VotableCommentService;
+import org.paz.community.vote.post.entity.VotablePostEntity;
+import org.paz.community.vote.post.repository.VotablePostRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
-public class CommentServiceImpl implements CommentService {
+public class VotableCommentServiceImpl implements VotableCommentService {
 
-    private final CommentRepository commentRepository;
+    private final VotableCommentRepository votableCommentRepository;
     private final MemberJpaRepository memberJpaRepository;
-    private final PostRepository postRepository;
+    private final VotablePostRepository votablePostRepository;
 
     /**
      * 투표 게시판 댓글 작성 로직
@@ -35,16 +34,16 @@ public class CommentServiceImpl implements CommentService {
         MemberEntity memberEntity = memberJpaRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("댓글 작성: 엠버 엔티티 조회 오류"));
         // 댓글이 소속된 post 정보
-        PostEntity postEntity = postRepository.findById(postId)
+        VotablePostEntity votablePostEntity = votablePostRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("댓글 작성: 원본 게시글 조회 오류"));
         // 댓글 빌더
-        CommentEntity commentEntity = CommentEntity.builder()
+        VotableCommentEntity commentEntity = VotableCommentEntity.builder()
                 .comment(comment)
                 .memberEntity(memberEntity)
-                .postEntity(postEntity)
+                .votablePostEntity(votablePostEntity)
                 .build();
         // 댓글 DB 반영
-        commentRepository.save(commentEntity);
+        votableCommentRepository.save(commentEntity);
     }
 
     /**
@@ -55,7 +54,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public ReadOneVotableCommentDto readOneVotableComment(Long commentId) {
 
-        CommentEntity commentEntity = commentRepository.findById(commentId)
+        VotableCommentEntity commentEntity = votableCommentRepository.findById(commentId)
                 .orElseThrow(() -> new IllegalArgumentException("단일 댓글 조회 오류(vote)"));
 
         return new ReadOneVotableCommentDto(commentEntity);
@@ -68,7 +67,7 @@ public class CommentServiceImpl implements CommentService {
      */
     @Override
     public void modifyVotableComment(Long commentId, String comment) {
-        CommentEntity commentEntity = commentRepository.findById(commentId)
+        VotableCommentEntity commentEntity = votableCommentRepository.findById(commentId)
                 .orElseThrow(() -> new IllegalArgumentException("댓글 수정: 댓글 엔티티 조회 오류(vote)"));
 
         MemberEntity memberEntity = commentEntity.getMemberEntity();
@@ -88,7 +87,7 @@ public class CommentServiceImpl implements CommentService {
             commentEntity.modifyComment(comment);
         }
 
-        commentRepository.save(commentEntity);
+        votableCommentRepository.save(commentEntity);
     }
 
     /**
@@ -98,7 +97,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public void deleteVotableComment(Long commentId) {
         // 댓글 삭제를 위한 원본 조회(soft delete)
-        CommentEntity commentEntity = commentRepository.findById(commentId)
+        VotableCommentEntity commentEntity = votableCommentRepository.findById(commentId)
                 .orElseThrow(() -> new IllegalArgumentException("댓글 삭제: 원본 댓글 조회 오류(vote)"));
 
         MemberEntity memberEntity = commentEntity.getMemberEntity();
@@ -116,6 +115,6 @@ public class CommentServiceImpl implements CommentService {
 
         commentEntity.softDelete();
 
-        commentRepository.save(commentEntity);
+        votableCommentRepository.save(commentEntity);
     }
 }

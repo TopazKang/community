@@ -103,8 +103,8 @@ public class MemberServiceImpl implements MemberService {
 //    }
 
     @Override
-    public MemberDto.Info readInfo() {
-        Member member = new Member(SecurityContextUtil.getCurrentUserId());
+    public MemberDto.Info readInfo(Long authenticatedId) {
+        Member member = new Member(authenticatedId);
         Member res = commonMemberRepository.readInfo(member);
         MemberDto.Info result = new MemberDto.Info(res.getNickname(), res.getEmail(), res.getProfile_image_path());
         return result;

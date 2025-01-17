@@ -2,7 +2,7 @@ package org.paz.community.vote.post.dto;
 
 import lombok.Getter;
 import org.paz.community.vote.comment.dto.ReadOneVotableCommentDto;
-import org.paz.community.vote.post.entity.PostEntity;
+import org.paz.community.vote.post.entity.VotablePostEntity;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -29,24 +29,24 @@ public class ReadOneVotablePostDto {
     private String userImage;
     private List<ReadOneVotableCommentDto> comments;
 
-    public ReadOneVotablePostDto(PostEntity postEntity, List<ReadOneVotableCommentDto> comments) {
-        this.postId = postEntity.getId();
-        this.postTitle = postEntity.getTitle();
-        this.postContent = postEntity.getContent();
-        this.postImagePath = postEntity.getPostImagePath();
-        this.tags = postEntity.getTags();
-        this.shutter = postEntity.getShutter();
-        this.iso = postEntity.getIso();
-        this.whitebalance = postEntity.getWhitebalance();
-        this.aperture = postEntity.getAperture();
-        this.likesCount = postEntity.getLikesCount();
-        this.hitsCount = postEntity.getHitsCount();
-        this.repliesCount = postEntity.getRepliesCount();
-        this.createdAt = postEntity.getCreatedAt();
-        this.updatedAt = postEntity.getUpdatedAt();
-        this.userId = postEntity.getMemberEntity().getId();
-        this.userNickname = postEntity.getMemberEntity().getNickname();
-        this.userImage = postEntity.getMemberEntity().getProfileImagePath();
+    public ReadOneVotablePostDto(VotablePostEntity votablePostEntity, List<ReadOneVotableCommentDto> comments) {
+        this.postId = votablePostEntity.getId();
+        this.postTitle = votablePostEntity.getTitle();
+        this.postContent = votablePostEntity.getContent();
+        this.postImagePath = votablePostEntity.getPostImagePath();
+        this.tags = votablePostEntity.getTags();
+        this.shutter = votablePostEntity.getShutter();
+        this.iso = votablePostEntity.getIso();
+        this.whitebalance = votablePostEntity.getWhitebalance();
+        this.aperture = votablePostEntity.getAperture();
+        this.likesCount = votablePostEntity.getLikesCount();
+        this.hitsCount = votablePostEntity.getHitsCount();
+        this.repliesCount = votablePostEntity.getRepliesCount();
+        this.createdAt = votablePostEntity.getCreatedAt();
+        this.updatedAt = votablePostEntity.getUpdatedAt();
+        this.userId = votablePostEntity.getMemberEntity().getId();
+        this.userNickname = votablePostEntity.getMemberEntity().getNickname();
+        this.userImage = votablePostEntity.getMemberEntity().getProfileImagePath();
         this.comments = comments;
     }
 
