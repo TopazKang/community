@@ -23,9 +23,10 @@ public class ReadOnePostResponseDto {
     private Long userId;
     private String userNickname;
     private String userImage;
+    private Boolean isOwner;
     private List<ReadOneCommentResponseDto> comments;
 
-    public ReadOnePostResponseDto(PostEntity postEntity, List<ReadOneCommentResponseDto> comments) {
+    public ReadOnePostResponseDto(PostEntity postEntity, Boolean isOwner, List<ReadOneCommentResponseDto> comments) {
         this.postId = postEntity.getId();
         this.postTitle = postEntity.getTitle();
         this.postImage = postEntity.getPostImagePath();
@@ -40,6 +41,7 @@ public class ReadOnePostResponseDto {
         this.userId = postEntity.getMemberEntity().getId();
         this.userNickname = postEntity.getMemberEntity().getNickname();
         this.userImage = postEntity.getMemberEntity().getProfileImagePath();
+        this.isOwner = isOwner;
         this.comments = comments;
     }
 }

@@ -6,6 +6,7 @@ import org.paz.community.comment.entity.CommentEntity;
 import org.paz.community.comment.repository.CommentRepository;
 import org.paz.community.member.entity.MemberEntity;
 import org.paz.community.member.repository.MemberJpaRepository;
+import org.paz.community.member.userDetails.CustomUserDetails;
 import org.paz.community.post.dto.*;
 import org.paz.community.post.entity.PostEntity;
 import org.paz.community.post.repository.PostRepository;
@@ -103,31 +104,39 @@ public class PostServiceImpl implements PostService {
      * @return ReadOnePostResponseDto 단일 게시글 조회용 Dto
       */
     @Override
-    public ReadOnePostResponseDto readOnePost(Long postId) {
+    public ReadOnePostResponseDto readOnePost(Long postId, CustomUserDetails userDetails) {
+        // 사용자 id 추출
+        Long userId = (userDetails != null) ? userDetails.getId() : -1L;
+
         // 게시글 엔티티에 postId에 맞는 게시글 정보 조회
         PostEntity postEntity = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("단일 게시글 조회 오류"));
+
+        Boolean isOwner = postEntity.getMemberEntity().getId().equals(userId);
 
         // 댓글 엔티티 리스트에 postId에 대한 모든 댓글 조회
         List<CommentEntity> commentEntities = commentRepository.findByPostEntityAndDeletedAtIsNull(postEntity);
 
         // 댓글 조회용 dto 리스트에 엔티티 기준으로 담은 데이터 할당
         List<ReadOneCommentResponseDto> comments = commentEntities.stream()
-                .map(ReadOneCommentResponseDto::new)
+                .map(commentEntity -> {
+                    Boolean isCommentOwner = commentEntity.getMemberEntity().getId().equals(userId);
+
+                    return new ReadOneCommentResponseDto(commentEntity, isCommentOwner);
+                })
                 .toList();
 
         // 게시글 및 댓글 정보 반환(Dto)
-        return new ReadOnePostResponseDto(postEntity, comments);
+        return new ReadOnePostResponseDto(postEntity, isOwner, comments);
     }
 
     /**
      * 게시글 수정 로직
      * @param postId 게시글 id
      * @param data 게시글 수정 정보를 담은 Dto
-     * @param files 게시글 수정: 이미지 파일
      */
     @Override
-    public void modifyPost(Long postId, ModifyPostRequestDto data, List<MultipartFile> files) {
+    public void modifyPost(Long postId, ModifyPostRequestDto data) {
         // 게시글 원본 데이터 조회
         PostEntity postEntity = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("게시글 수정: 단일 게시글 조회 오류"));
@@ -144,27 +153,6 @@ public class PostServiceImpl implements PostService {
         if(!Objects.equals(savedId, authenticatedId)){
             // fix
             System.out.println("게시물 작성자 불일치");
-        }
-
-        // files가 null이 아니면 사진을 저장하고 경로 저장
-        if (files != null) {
-            for(MultipartFile file : files) {
-                String originalName = file.getOriginalFilename();
-                imagePath = "/images/post/" + time.getFormattedCurrentTime() + originalName;
-                Path savePath = Paths.get(uploadPath, time.getFormattedCurrentTime() + originalName);
-
-                try {
-                    Files.createDirectories((savePath.getParent()));
-                    file.transferTo(savePath);
-                } catch (IOException e) {
-                    System.out.println(e + "이미지 저장을 위한 경로를 찾을 수 없음.");
-                }
-            }
-
-            // 원본과 새로 저장된 사진의 경로값이 다르면 새로운 경로로 엔티티 값 변경
-            if(!Objects.equals(postEntity.getPostImagePath(), imagePath)){
-                postEntity.modifyPostImagePath(imagePath);
-            }
         }
 
         // 원본과 새로운 제목이 차이가 있으면 새로운 제목으로 엔티티 값 변경

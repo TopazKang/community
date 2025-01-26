@@ -2,11 +2,13 @@ package org.paz.community.post.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import org.paz.community.member.userDetails.CustomUserDetails;
 import org.paz.community.post.dto.*;
 import org.paz.community.post.service.impl.PostServiceImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -44,8 +46,9 @@ public class PostController {
 
     @GetMapping(value = "/{postId}")
     @Operation(summary = "단일 게시글 조회")
-    public ResponseEntity<ReadOnePostResponseDto> readOnePost(@PathVariable Long postId){
-        ReadOnePostResponseDto response = postService.readOnePost(postId);
+    public ResponseEntity<ReadOnePostResponseDto> readOnePost(@PathVariable Long postId,
+                                                              @AuthenticationPrincipal CustomUserDetails userDetails){
+        ReadOnePostResponseDto response = postService.readOnePost(postId, userDetails);
 
         return ResponseEntity.ok(response);
     }
@@ -53,9 +56,8 @@ public class PostController {
     @PatchMapping(value = "/{postId}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
     @Operation(summary = "게시글 수정")
     public ResponseEntity<Void> modifyPost(@PathVariable Long postId,
-                                           @RequestPart ModifyPostRequestDto data,
-                                           @RequestPart (value="file", required = false) List<MultipartFile> files){
-        postService.modifyPost(postId, data, files);
+                                           @RequestBody ModifyPostRequestDto data){
+        postService.modifyPost(postId, data);
 
         return ResponseEntity.ok().build();
     }
