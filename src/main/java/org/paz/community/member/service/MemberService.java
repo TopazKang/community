@@ -20,7 +20,7 @@ public interface MemberService{
     // 로그아웃
 
     // find by id
-    MemberDto.Info readInfo();
+    MemberDto.Info readInfo(Long authenticatedId);
     // 회원정보 수정
     void modifyInfo(MemberDto.ModifyInfo dto, List<MultipartFile> file);
     // 비밀번호 변경
