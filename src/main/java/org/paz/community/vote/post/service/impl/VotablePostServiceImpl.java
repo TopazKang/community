@@ -52,7 +52,7 @@ public class VotablePostServiceImpl implements VotablePostService {
         if(files != null){
             for(MultipartFile file : files){
                 String originalName = file.getOriginalFilename();
-                imagePath = "/images/post"+time.getFormattedCurrentTime()+originalName;
+                imagePath = "/images/post/"+time.getFormattedCurrentTime()+originalName;
                 Path savePath = Paths.get(uploadPath, time.getFormattedCurrentTime()+originalName);
 
                 try {
@@ -77,6 +77,7 @@ public class VotablePostServiceImpl implements VotablePostService {
                 .likesCount(0)
                 .hitsCount(0)
                 .repliesCount(0)
+                .votesCount(0)
                 .tags(createVotablePostDto.getTags())
                 .build();
 

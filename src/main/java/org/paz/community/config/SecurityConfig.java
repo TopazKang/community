@@ -58,7 +58,7 @@ public class SecurityConfig {
                                 .requestMatchers("/users/login","/login").permitAll()
                                 .requestMatchers("/swagger-ui/**","/v3/api-docs/**").permitAll() // 스웨거 접근 권한 오픈
                                 .requestMatchers("/api/members/","/api/members/nickname","/api/members/email").permitAll()
-                                .requestMatchers(HttpMethod.GET, "/api/posts/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/api/posts/**", "/api/vote-posts/**").permitAll()
                                 .requestMatchers("/images/profile/**","/images/post/**").permitAll()
                                 .anyRequest().authenticated())
 

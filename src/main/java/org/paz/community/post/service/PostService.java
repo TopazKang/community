@@ -1,5 +1,6 @@
 package org.paz.community.post.service;
 
+import org.paz.community.member.userDetails.CustomUserDetails;
 import org.paz.community.post.dto.*;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
@@ -14,9 +15,9 @@ public interface PostService {
     // 전체 게시글 페이징 조회
     ReadSummaryWithPagedPostDto readAllPostWithPage(Pageable pageable);
     // 단일 게시글 조회
-    ReadOnePostResponseDto readOnePost(Long postId);
+    ReadOnePostResponseDto readOnePost(Long postId, CustomUserDetails userDetails);
     // 게시글 수정
-    void modifyPost(Long postId, ModifyPostRequestDto data, List<MultipartFile> files);
+    void modifyPost(Long postId, ModifyPostRequestDto data);
     // 게시글 삭제
     void deletePost(Long postId);
 
