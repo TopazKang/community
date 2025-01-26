@@ -56,11 +56,13 @@ public class CommentServiceImpl implements CommentService {
      * @return ReadOneCommentResponseDto 단일 댓글 조회용 Dto
      */
     @Override
-    public ReadOneCommentResponseDto readOneComment(Long commentId) {
+    public ReadOneCommentResponseDto readOneComment(Long commentId, Long userId) {
         CommentEntity commentEntity = commentRepository.findById(commentId)
                 .orElseThrow(() -> new IllegalArgumentException("단일 댓글 조회 오류"));
 
-        return new ReadOneCommentResponseDto(commentEntity);
+        Boolean isOwner = commentEntity.getMemberEntity().getId().equals(userId);
+
+        return new ReadOneCommentResponseDto(commentEntity, isOwner);
     }
 
     /**
