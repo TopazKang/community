@@ -3,6 +3,9 @@ package org.paz.community.vote.vote.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.paz.community.member.entity.MemberEntity;
 import org.paz.community.member.repository.MemberJpaRepository;
+import org.paz.community.vote.post.entity.VotablePostEntity;
+import org.paz.community.vote.post.repository.VotablePostRepository;
+import org.paz.community.vote.post.service.VotablePostService;
 import org.paz.community.vote.vote.entity.VoteEntity;
 import org.paz.community.vote.vote.repository.VoteRepository;
 import org.paz.community.vote.vote.service.VoteService;
@@ -32,6 +35,8 @@ public class VoteServiceImpl implements VoteService {
                 .memberEntity(memberEntity)
                 .votablepostEntity(votablePostEntity)
                 .build();
+
+        votablePostService.increaseVoteCount(postId);
 
         // 투표 DB 반영
         voteRepository.save(voteEntity);
