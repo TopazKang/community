@@ -4,7 +4,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import org.paz.community.member.domain.Member;
 import org.paz.community.member.dto.MemberDto;
 import org.paz.community.member.service.MemberServiceImpl;
+import org.paz.community.member.userDetails.CustomUserDetails;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -63,8 +65,8 @@ public class MemberController {
 
     @GetMapping("/") // 회원 정보 조회(수정을 위한)
     @Operation(summary="회원 정보 조회")
-    public MemberDto.Info readInfo(){
-        MemberDto.Info result = commonMemberService.readInfo();
+    public MemberDto.Info readInfo(@AuthenticationPrincipal CustomUserDetails userDetails){
+        MemberDto.Info result = commonMemberService.readInfo(userDetails.getId());
         return result;
     }
     @PatchMapping(value="/", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE}) // 회원 정보 수정
