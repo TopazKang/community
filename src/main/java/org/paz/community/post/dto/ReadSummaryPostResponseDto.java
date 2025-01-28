@@ -17,6 +17,9 @@ public class ReadSummaryPostResponseDto {
     private Long userId;
     private String userNickname;
     private String userImage;
+    private String category;
+    private String tags;
+
 
     public ReadSummaryPostResponseDto(PostEntity postEntity) {
         this.postId = postEntity.getId();
@@ -29,5 +32,7 @@ public class ReadSummaryPostResponseDto {
         this.userId = postEntity.getMemberEntity().getId();
         this.userNickname = postEntity.getMemberEntity().getNickname();
         this.userImage = postEntity.getMemberEntity().getProfileImagePath();
+        this.category = postEntity.getCategory();
+        this.tags = postEntity.getTags();
     }
 }

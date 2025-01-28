@@ -4,7 +4,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.paz.community.comment.dto.ReadOneCommentResponseDto;
 import org.paz.community.comment.service.impl.CommentServiceImpl;
+import org.paz.community.member.userDetails.CustomUserDetails;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -16,18 +18,18 @@ public class CommentController {
 
     @PostMapping(value="/{postId}")
     @Operation(summary = "댓글 작성")
-    public ResponseEntity<Void> createComment(@RequestHeader("Authorization") String token,
-                                              @PathVariable Long postId,
+    public ResponseEntity<Void> createComment(@PathVariable Long postId,
                                               @RequestBody String comment){
-        commentService.createComment(token.substring(7), postId, comment);
+        commentService.createComment(postId, comment);
 
         return ResponseEntity.ok().build();
     }
 
     @GetMapping(value="/{commentId}")
     @Operation(summary = "단일 댓글 조회")
-    public ResponseEntity<ReadOneCommentResponseDto> readOneComment(@PathVariable Long commentId){
-        ReadOneCommentResponseDto response = commentService.readOneComment(commentId);
+    public ResponseEntity<ReadOneCommentResponseDto> readOneComment(@PathVariable Long commentId,
+                                                                    @AuthenticationPrincipal CustomUserDetails userDetails){
+        ReadOneCommentResponseDto response = commentService.readOneComment(commentId, userDetails.getId());
 
         return ResponseEntity.ok(response);
     }

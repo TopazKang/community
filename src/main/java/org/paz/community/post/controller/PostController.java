@@ -2,13 +2,13 @@ package org.paz.community.post.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
-import org.paz.community.post.dto.CreatePostRequestDto;
-import org.paz.community.post.dto.ModifyPostRequestDto;
-import org.paz.community.post.dto.ReadOnePostResponseDto;
-import org.paz.community.post.dto.ReadSummaryPostResponseDto;
+import org.paz.community.member.userDetails.CustomUserDetails;
+import org.paz.community.post.dto.*;
 import org.paz.community.post.service.impl.PostServiceImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -21,12 +21,10 @@ public class PostController {
 
     private final PostServiceImpl postService;
 
-    @PostMapping(value = "/", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    @PostMapping(value = "/")
     @Operation(summary = "게시글 작성")
-    public ResponseEntity<Void> createPost(@RequestHeader("Authorization") String token,
-                                           @RequestPart(value="request") CreatePostRequestDto data,
-                                           @RequestPart(value = "file", required = false) List<MultipartFile> files){
-        postService.createPost(token.substring(7), data,files);
+    public ResponseEntity<Void> createPost(@RequestBody CreatePostRequestDto data){
+        postService.createPost(data);
         return ResponseEntity.ok().build();
     }
 
@@ -38,10 +36,19 @@ public class PostController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping(value = "/paged")
+    @Operation(summary = "게시글 페이징 조회")
+    public ResponseEntity<ReadSummaryWithPagedPostDto> readAllPostWithPage(Pageable pageable){
+        ReadSummaryWithPagedPostDto response = postService.readAllPostWithPage(pageable);
+
+        return ResponseEntity.ok(response);
+    }
+
     @GetMapping(value = "/{postId}")
     @Operation(summary = "단일 게시글 조회")
-    public ResponseEntity<ReadOnePostResponseDto> readOnePost(@PathVariable Long postId){
-        ReadOnePostResponseDto response = postService.readOnePost(postId);
+    public ResponseEntity<ReadOnePostResponseDto> readOnePost(@PathVariable Long postId,
+                                                              @AuthenticationPrincipal CustomUserDetails userDetails){
+        ReadOnePostResponseDto response = postService.readOnePost(postId, userDetails);
 
         return ResponseEntity.ok(response);
     }
@@ -49,9 +56,8 @@ public class PostController {
     @PatchMapping(value = "/{postId}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
     @Operation(summary = "게시글 수정")
     public ResponseEntity<Void> modifyPost(@PathVariable Long postId,
-                                           @RequestPart ModifyPostRequestDto data,
-                                           @RequestPart (value="file", required = false) List<MultipartFile> files){
-        postService.modifyPost(postId, data, files);
+                                           @RequestBody ModifyPostRequestDto data){
+        postService.modifyPost(postId, data);
 
         return ResponseEntity.ok().build();
     }
@@ -62,5 +68,12 @@ public class PostController {
         postService.deletePost(postId);
 
         return ResponseEntity.ok().build();
+    }
+
+    @PostMapping(value = "/image", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    @Operation(summary = "이미지 업로드")
+    public ResponseEntity<String> uploadImage(@RequestPart(value = "file", required = false) MultipartFile file){
+        String response = postService.uploadImage(file);
+        return ResponseEntity.ok(response);
     }
 }

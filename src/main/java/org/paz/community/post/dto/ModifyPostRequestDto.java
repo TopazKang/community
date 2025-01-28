@@ -9,4 +9,6 @@ import org.springframework.web.multipart.MultipartFile;
 public class ModifyPostRequestDto {
     private String title;
     private String content;
+    private String category;
+    private String tags;
 }

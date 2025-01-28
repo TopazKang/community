@@ -6,12 +6,14 @@ import lombok.Getter;
 public class MemberDto {
 
     @Getter
-    public static class SignIn {
+    public static class SignUp {
+        private String name;
         private String nickname;
         private String email;
         private String password;
 
-        public SignIn(String nickname, String email, String password) {
+        public SignUp(String name, String nickname, String email, String password) {
+            this.name = name;
             this.nickname = nickname;
             this.email = email;
             this.password = password;
@@ -45,28 +47,17 @@ public class MemberDto {
             this.password = password;
         }
     }
-    @Getter
-    public static class LoginReturn {
-        private String grantType;
-        private String accessToken;
-        private String refreshToken;
-        private String profile_image_path;
 
-        public LoginReturn(String grantType, String accessToken, String refreshToken, String profile_image_path){
-            this.grantType = grantType;
-            this.accessToken = accessToken;
-            this.refreshToken = refreshToken;
-            this.profile_image_path = profile_image_path;
-        }
-    }
     @Getter
     public static class Info {
         private String nickname;
         private String email;
+        private String profile_image_path;
 
-        public Info(String nickname, String email){
+        public Info(String nickname, String email, String profileImagePath){
             this.nickname = nickname;
             this.email = email;
+            this.profile_image_path = profileImagePath;
         }
     }
     @Getter

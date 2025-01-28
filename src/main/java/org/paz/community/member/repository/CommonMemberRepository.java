@@ -26,7 +26,7 @@ public class CommonMemberRepository implements MemberRepository {
     public class LoginRowMapper implements RowMapper<Member> { // 로그인 반환
         @Override
         public Member mapRow(ResultSet rs, int rowNum) throws SQLException{
-            int id = rs.getInt("id");
+            Long id = (long) rs.getInt("id");
             String password = rs.getString("password");
             String profile_image_path = rs.getString("profile_image_path");
 
@@ -38,8 +38,9 @@ public class CommonMemberRepository implements MemberRepository {
         public Member mapRow(ResultSet rs, int rowNum) throws SQLException{
             String nickname = rs.getString("nickname");
             String email = rs.getString("email");
+            String profile_image_path = rs.getString("profile_image_path");
 
-            return new Member(nickname, email);
+            return new Member(nickname, email, profile_image_path);
         }
     }
 
@@ -47,8 +48,8 @@ public class CommonMemberRepository implements MemberRepository {
     // 회원가입
     @Override
     public void createUser(Member member) {
-        String sql = "insert into member values(null, ?, ?, ?, ?, now(), now(), null)";
-        jdbcTemplate.update(sql, member.getNickname(), member.getEmail(), member.getPassword(), member.getProfile_image_path());
+        String sql = "insert into member values(null, ?, ?, ?, ?, now(), now(), null, ?)";
+        jdbcTemplate.update(sql, member.getNickname(), member.getEmail(), member.getPassword(), member.getProfile_image_path(), member.getName());
     }
     // 이메일 중복 확인
     @Override
@@ -71,7 +72,7 @@ public class CommonMemberRepository implements MemberRepository {
     // 회원정보 조회
     @Override
     public Member readInfo(Member member) {
-        String sql = "select nickname, email from member where id = ?";
+        String sql = "select nickname, email, profile_image_path from member where id = ?";
         return jdbcTemplate.queryForObject(sql, new Object[]{member.getId()}, new InfoRowMapper());
     }
     // 회원정보 수정

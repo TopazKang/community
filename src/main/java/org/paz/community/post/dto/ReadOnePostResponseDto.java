@@ -12,6 +12,9 @@ public class ReadOnePostResponseDto {
     private Long postId;
     private String postTitle;
     private String postImage;
+    private String category;
+    private String tags;
+    private String postContent;
     private LocalDateTime postCreatedAt;
     private LocalDateTime postUpdatedAt;
     private int likesCount;
@@ -20,12 +23,16 @@ public class ReadOnePostResponseDto {
     private Long userId;
     private String userNickname;
     private String userImage;
+    private Boolean isOwner;
     private List<ReadOneCommentResponseDto> comments;
 
-    public ReadOnePostResponseDto(PostEntity postEntity, List<ReadOneCommentResponseDto> comments) {
+    public ReadOnePostResponseDto(PostEntity postEntity, Boolean isOwner, List<ReadOneCommentResponseDto> comments) {
         this.postId = postEntity.getId();
         this.postTitle = postEntity.getTitle();
         this.postImage = postEntity.getPostImagePath();
+        this.category = postEntity.getCategory();
+        this.tags = postEntity.getTags();
+        this.postContent = postEntity.getContent();
         this.postCreatedAt = postEntity.getCreatedAt();
         this.postUpdatedAt = postEntity.getUpdatedAt();
         this.likesCount = postEntity.getLikesCount();
@@ -34,6 +41,7 @@ public class ReadOnePostResponseDto {
         this.userId = postEntity.getMemberEntity().getId();
         this.userNickname = postEntity.getMemberEntity().getNickname();
         this.userImage = postEntity.getMemberEntity().getProfileImagePath();
+        this.isOwner = isOwner;
         this.comments = comments;
     }
 }
