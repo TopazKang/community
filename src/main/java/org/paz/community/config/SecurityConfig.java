@@ -5,6 +5,7 @@ import org.paz.community.member.repository.MemberJpaRepository;
 import org.paz.community.security.JwtFilter;
 import org.paz.community.security.JwtUtil;
 import org.paz.community.security.LoginFilter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -68,10 +69,12 @@ public class SecurityConfig {
         return http.build();
     }
 
+    @Value("${cors.allowed.origin}")
+    private String corsAllowedOrigin;
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOrigin("http://localhost:3000");
+        configuration.addAllowedOrigin(corsAllowedOrigin);
         configuration.addAllowedMethod("*");
         configuration.addAllowedHeader("*");
         configuration.addExposedHeader("Authorization");
