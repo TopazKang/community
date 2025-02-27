@@ -37,3 +37,7 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### assets ###
+/src/main/resources/static/images/profile/
+/src/main/resources/static/images/post/

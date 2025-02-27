@@ -7,7 +7,8 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class Member {// JPA의 객체간의 구분을 위함
-    private Integer id;
+    private Long id;
+    private String name;
     private String nickname;
     private String email;
     private String password;
@@ -17,8 +18,9 @@ public class Member {// JPA의 객체간의 구분을 위함
     private String deleted_at;
 
     // 기본 생성자
-    public Member(Integer id, String nickname, String email, String password, String profile_image_path, String created_at, String updated_at, String deleted_at){
+    public Member(Long id, String name, String nickname, String email, String password, String profile_image_path, String created_at, String updated_at, String deleted_at){
         this.id = id;
+        this.name = name;
         this.nickname = nickname;
         this.email = email;
         this.password = password;
@@ -29,13 +31,14 @@ public class Member {// JPA의 객체간의 구분을 위함
     }
 
     // 회원가입을 위한 생성자
-    public Member(String nickname, String email, String password, String profile_image_path){
+    public Member(String name, String nickname, String email, String password, String profile_image_path){
+        this.name = name;
         this.nickname = nickname;
         this.email = email;
         this.password = password;
         this.profile_image_path = profile_image_path;
     }
-    public Member(int id, String nickname, String password, String profile_image_path){
+    public Member(Long id, String nickname, String password, String profile_image_path){
         // 로그인 반환 & 회원정보 수정 입력의 정적 팩토리 메서드 생성을 위함.
         this.id = id;
         this.nickname = nickname;
@@ -44,29 +47,30 @@ public class Member {// JPA의 객체간의 구분을 위함
     }
     // 이메일 중복확인을 위한 생성자
     public static Member withEmail(String email) {
-        return new Member(null, email, null, null);
+        return new Member((Long)null, email, null, null);
     }
     // 닉네임 중복확인을 위한 생성자
     public static Member withNickname(String nickname){
-        return new Member(nickname, null, null, null);
+        return new Member(null, nickname, null, null, null);
     }
-    public static Member withLoginReturn(int id, String password, String profile_image_path){
+    public static Member withLoginReturn(Long id, String password, String profile_image_path){
         // 로그인 이후 반환값들
         return new Member(id, null, password, profile_image_path);
     }
     // 아이디로 회원정보 조회
-    public Member(int id){ // 입력값에 id가 들어가는 요청(회원정보 조회 수정 삭제 etc)
+    public Member(Long id){ // 입력값에 id가 들어가는 요청(회원정보 조회 수정 삭제 etc)
         this.id = id;
     }
-    public Member(String nickname, String email){ //회원 정보 출력
+    public Member(String nickname, String email, String profile_image_path){ //회원 정보 출력
         this.nickname = nickname;
         this.email = email;
+        this.profile_image_path = profile_image_path;
     }
-    public static Member withModifyInfo(int id, String nickname, String profile_image_path){
+    public static Member withModifyInfo(Long id, String nickname, String profile_image_path){
         // 회원정보 수정시 입력 도메인
         return new Member(id, nickname, null, profile_image_path);
     }
-    public Member(int id, String password){
+    public Member(Long id, String password){
         // 비밀번호 변경 입력 도메인
         this.id = id;
         this.password = password;

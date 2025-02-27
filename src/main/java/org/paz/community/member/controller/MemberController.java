@@ -4,7 +4,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import org.paz.community.member.domain.Member;
 import org.paz.community.member.dto.MemberDto;
 import org.paz.community.member.service.MemberServiceImpl;
+import org.paz.community.member.userDetails.CustomUserDetails;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -21,7 +23,8 @@ public class MemberController {
 
     @PostMapping(value = "/", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE}) // 회원가입
     @Operation(summary = "회원가입")
-    public String signIn(@RequestPart(value="request") MemberDto.SignIn dto, @RequestPart(value="file", required = false) List<MultipartFile> files){
+    public String signIn(@RequestPart(value="request") MemberDto.SignUp dto, @RequestPart(value="file", required = false) List<MultipartFile> files){
+        System.out.println("회원가입");
         commonMemberService.createMember(dto, files);
         return "success";
     }
@@ -52,39 +55,37 @@ public class MemberController {
         }
     }
 
-    @PostMapping("/login") // 로그인
-    @Operation(summary = "로그인")
-    public MemberDto.LoginReturn login(@RequestBody MemberDto.Login dto){
-        MemberDto.LoginReturn result = commonMemberService.login(dto);
-        return result;
-    }
+//    @PostMapping("/login") // 로그인
+//    @Operation(summary = "로그인")
+//    public MemberDto.LoginReturn login(@RequestBody MemberDto.Login dto){
+//        MemberDto.LoginReturn result = commonMemberService.login(dto);
+//        return result;
+//    }
     // @PostMapping("/logout") // 로그아웃
 
     @GetMapping("/") // 회원 정보 조회(수정을 위한)
     @Operation(summary="회원 정보 조회")
-    public MemberDto.Info readInfo(@RequestHeader("Authorization") String token){
-        MemberDto.Info result = commonMemberService.readInfo(token.substring(7));
+    public MemberDto.Info readInfo(@AuthenticationPrincipal CustomUserDetails userDetails){
+        MemberDto.Info result = commonMemberService.readInfo(userDetails.getId());
         return result;
     }
     @PatchMapping(value="/", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE}) // 회원 정보 수정
     @Operation(summary="회원 정보 수정")
-    public String modifyInfo(@RequestHeader("Authorization") String token,
-                             @RequestPart(value="request") MemberDto.ModifyInfo dto,
+    public String modifyInfo(@RequestPart(value="request") MemberDto.ModifyInfo dto,
                              @RequestPart(value="file", required = false) List<MultipartFile> files){
-        commonMemberService.modifyInfo(token.substring(7), dto, files);
+        commonMemberService.modifyInfo(dto, files);
         return "success";
     }
     @PutMapping("/") // 비밀번호 변경
     @Operation(summary = "비밀번호 변경")
-    public String changePassword(@RequestHeader("Authorization") String token,
-                                 @RequestBody MemberDto.ChangePassword dto){
-        commonMemberService.changePassword(token.substring(7), dto);
+    public String changePassword(@RequestBody MemberDto.ChangePassword dto){
+        commonMemberService.changePassword(dto);
         return "success";
     }
     @DeleteMapping("/") // 회원 탈퇴
     @Operation(summary="회원 탈퇴")
-    public String deleteAccount(@RequestHeader("Authorization") String token){
-        commonMemberService.deleteAccount(token.substring(7));
+    public String deleteAccount(){
+        commonMemberService.deleteAccount();
         return "success";
     }
 }

@@ -38,6 +38,12 @@ public class PostEntity extends BaseEntity {
     @Column(name="replies_count", nullable = false)
     private Integer repliesCount = 0;
 
+    @Column(name="category", nullable = false)
+    private String category;
+
+    @Column(name="tags")
+    private String tags;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="user_id")
     private MemberEntity memberEntity;
@@ -69,5 +75,21 @@ public class PostEntity extends BaseEntity {
      */
     public void modifyPostImagePath(String modifiedPath){
         this.postImagePath = modifiedPath;
+    }
+
+    /**
+     * 게시글 카테고리 수정 Setter
+     * @param category 카테고리 수정 데이터
+     */
+    public void modifyCategory(String category){
+        this.category = category;
+    }
+
+    /**
+     * 게시글 태그 배열 수정 Setter
+     * @param tags 태그 배열 수정 데이터
+     */
+    public void modifyTags(String tags){
+        this.tags = tags;
     }
 }
