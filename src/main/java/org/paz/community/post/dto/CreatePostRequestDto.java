@@ -10,4 +10,5 @@ public class CreatePostRequestDto {
     private String content;
     private String category;
     private String tags;
+    private String postImagePath;
 }

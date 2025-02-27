@@ -55,7 +55,7 @@ public class PostServiceImpl implements PostService {
                 .memberEntity(memberEntity)
                 .title(data.getTitle())
                 .content(data.getContent())
-                .postImagePath(imagePath)
+                .postImagePath(data.getPostImagePath())
                 .likesCount(0)
                 .hitsCount(0)
                 .repliesCount(0)
