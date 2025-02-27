@@ -106,7 +106,7 @@ public class MemberServiceImpl implements MemberService {
     public MemberDto.Info readInfo(Long authenticatedId) {
         Member member = new Member(authenticatedId);
         Member res = commonMemberRepository.readInfo(member);
-        MemberDto.Info result = new MemberDto.Info(res.getNickname(), res.getEmail(), res.getProfile_image_path());
+        MemberDto.Info result = new MemberDto.Info(res.getName(), res.getNickname(), res.getEmail(), res.getProfile_image_path());
         return result;
     }
 

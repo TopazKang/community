@@ -50,11 +50,13 @@ public class MemberDto {
 
     @Getter
     public static class Info {
+        private String name;
         private String nickname;
         private String email;
         private String profile_image_path;
 
-        public Info(String nickname, String email, String profileImagePath){
+        public Info(String name, String nickname, String email, String profileImagePath){
+            this.name = name;
             this.nickname = nickname;
             this.email = email;
             this.profile_image_path = profileImagePath;
