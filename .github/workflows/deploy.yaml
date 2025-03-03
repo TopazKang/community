@@ -1,0 +1,51 @@
+name: Build and Push Spring Boot to GHCR
+
+on:
+  push:
+    branches:
+      - main  # main 브랜치에 푸시될 때 실행
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./gradlew
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'corretto'
+          java-version: '17'
+
+      - name: Build with Gradle
+        run: ./gradlew bootJar
+
+      - name: Build Docker Image
+        run: |
+          docker build \
+          -t ghcr.io/topazkang/shutter-fe:latest .
+
+      - name: Login to GitHub Container Registry
+        run: echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u ${{ secrets.GHCR_OWNER }} --password-stdin
+
+      - name: Push Docker Image
+        run: docker push ghcr.io/topazkang/shutter-fe:latest
+
+  pull-and-deploy:
+    runs-on: [ self-hosted, Linux, X64, shutter_be ]
+    name: Deploy by Self-Hosted Runner
+    needs: build-and-push
+
+    steps:
+      - name: deploy by docker-compose
+        run: |
+          cd /home/paz/shutter
+          docker-compose -f docker-compose.be.yaml down
+          docker-compose -f docker-compose.be.yaml pull
+          docker-compose -f docker-compose.be.yaml up -d
+
