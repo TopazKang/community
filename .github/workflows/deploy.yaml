@@ -29,13 +29,13 @@ jobs:
       - name: Build Docker Image
         run: |
           docker build \
-          -t ghcr.io/topazkang/shutter-fe:latest .
+          -t ghcr.io/topazkang/shutter-be:latest .
 
       - name: Login to GitHub Container Registry
         run: echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u ${{ secrets.GHCR_OWNER }} --password-stdin
 
       - name: Push Docker Image
-        run: docker push ghcr.io/topazkang/shutter-fe:latest
+        run: docker push ghcr.io/topazkang/shutter-be:latest
 
   pull-and-deploy:
     runs-on: [ self-hosted, Linux, X64, shutter_be ]
